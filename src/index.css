@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -10,6 +12,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+::placeholder{
+  opacity: 0.6
+}
+::placeholder, input {
+  color: #002238;
 }
 
 a {
@@ -40,7 +48,6 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-	background: none;
   color:#fff;
   cursor: pointer;
   transition: border-color 0.25s;

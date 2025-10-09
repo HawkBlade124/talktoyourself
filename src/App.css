@@ -1,7 +1,6 @@
 #root {
   margin: 0 auto;
   padding: 0 2rem;
-  text-align: center;
   width:100%;
 }
 header {
@@ -13,7 +12,7 @@ header {
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
-	max-width: 250px;	
+	max-width: 450px;	
 }
 .userSpace a{
 	display:block;
@@ -95,4 +94,8 @@ header {
 	margin:10px 0;
 	padding:7px 15px;
 	border-radius: 15px;
+}
+.inputIcons {
+	color:#002238;
+	margin-left:5px;		
 }
