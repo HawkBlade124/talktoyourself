@@ -1,0 +1,98 @@
+#root {
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  width:100%;
+}
+header {
+	display:flex;
+	justify-content: space-between;
+	width:100%;
+}
+.userSpace{
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	max-width: 250px;	
+}
+.userSpace a{
+	display:block;
+	padding: 15px 0
+}
+.initialChatBody {
+	display:flex;
+	place-items: center;
+	justify-content: center;
+	min-height:84vh;
+}
+.chatbox{
+  display: flex;
+  flex-direction: column;  /* ⬅️ stack children top-to-bottom */
+  justify-content: flex-end;
+  height: 760px;
+  max-width: 1450px;
+  margin: 0 auto;
+  position: relative;
+}
+#reminder{	
+	text-align: center;
+	width:100%;
+	display:block;
+	position: absolute;	
+	left:0;
+	right:0;
+	top:0;
+	place-content: center;
+	background:#00ccb9;
+	color:#00302b;
+	padding:15px 0;
+	max-width: 750px;
+	border-radius:15px;
+	margin-inline: auto;   
+}
+#reminder i{
+	cursor: pointer;
+}
+.sentMessages{	
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  flex: 1;           /* let it take remaining space */
+  padding: 1rem;     /* so messages don’t hug the edges */
+}
+.sendWrapper input {
+	width:100%;
+	box-sizing: border-box;
+	height:35px;
+	background:none;
+	border:none;
+	color:#fff;
+}
+.sendWrapper input::placeholder{
+	color:#fff;
+	opacity: 0.4
+}
+.sendWrapper {
+	background:#2b2a33;	
+	display:flex;
+	align-items: center;
+	max-width:700px;
+	margin:0 auto;
+	border-radius: 25px;
+}
+.icons{
+	padding:0 20px;
+}
+.select .inactive{
+	display: none;
+}
+.sentMessage{
+	background-color: #1b608d;
+	margin:10px 0;
+	padding:7px 15px;
+	border-radius: 15px;
+}
