@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+*, :before, :after{
+  
+  box-sizing: border-box;
+}
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -19,7 +23,10 @@
 ::placeholder, input {
   color: #002238;
 }
-
+html,body{
+  width:100%;
+  height:100%;
+}
 a {
   font-weight: 500;
   color: #646cff;
@@ -51,9 +58,6 @@ button {
   color:#fff;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
 }
 button:focus,
 button:focus-visible {

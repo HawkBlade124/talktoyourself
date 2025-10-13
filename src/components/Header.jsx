@@ -1,33 +1,38 @@
 import { Link } from "react-router-dom";
-function Header(){
-      const [users, setUsers] = useState([]);
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
-  useEffect(() => {
-    fetch('http://localhost:5000/users')
-      .then(res => res.json())
-      .then(data => setUsers(data))
-      .catch(err => console.error(err));
-  }, []);
-    return(        
-        <>
-              <h1>Users</h1>
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>{user.name}</li>
-        ))}
-      </ul>
-            <header>
-                <div className="logo">Talk To Yourself</div>
-                <div className="userSpace">
-                    <Link to="/">Home</Link>
-                    <Link to="/about">How It Works</Link>                                        
-                    <Link to="/pricing">Pricing</Link>
-                    <Link to="/contact">Contact</Link>
-                    <Link to="/login">Login</Link>
-                </div>
-            </header>
-        </>
-    )
+function Header() {
+  const { user, logout, loading } = useContext(AuthContext);
+
+  if (loading) {
+
+    return null;
+  }
+
+  return (
+    <header className="flex items-center pt-2">
+      <div className="logo">Talk To Yourself</div>
+      <div className="userSpace max-w-3xl flex items-center gap-5">
+        <Link to="/">Home</Link>
+        <Link to="/about">How It Works</Link>
+        <Link to="/pricing">Pricing</Link>
+        <Link to="/contact">Contact</Link>
+
+        {user ? (
+          <>
+            <Link to="/dashboard">{user.Username}</Link>
+            <span onClick={logout}>Logout</span>
+          </>
+        ) : (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
+        )}
+      </div>
+    </header>
+  );
 }
 
-export default Header
+export default Header;

@@ -7,4 +7,9 @@ export default defineConfig({
   resolve: {
     extensions: ['.js', '.jsx'],
   },
+    server: {
+    proxy: {
+      '/users': 'http://localhost:5000'
+    }
+  }
 })

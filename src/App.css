@@ -8,12 +8,6 @@ header {
 	justify-content: space-between;
 	width:100%;
 }
-.userSpace{
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-	max-width: 450px;	
-}
 .userSpace a{
 	display:block;
 	padding: 15px 0
@@ -96,6 +90,13 @@ header {
 	border-radius: 15px;
 }
 .inputIcons {
-	color:#002238;
-	margin-left:5px;		
+	color:#002238;		
+}
+#hookList li:before{
+  font-family: "Font Awesome 6 Pro";
+  font-weight: 400;
+  content: '\f14a';
+  display: inline-block;
+  width: 1em;
+	margin-right: 0.5em;
 }
