@@ -7,11 +7,11 @@ function Home() {
   const [h1Visible, setH1Visible] = useState(true);
   const [chatBoxVisible, setChatBoxVisible] = useState(false);
   const [reminderHidden, setReminderHidden] = useState(true);
+  const [messageCount, setMessageCount] = useState(0);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.UserID;
 
-  // 🧠 Fetch messages when the component mounts
   useEffect(() => {
     if (!userId) return;
     axios
@@ -30,8 +30,8 @@ function Home() {
     setMessages((prev) => [...prev, { Message: message }]); // local UI update
     setMessage("");
     setH1Visible(false);
-    setChatBoxVisible(true);
-
+    setChatBoxVisible(true);  
+    setReminderHidden(false);
     try {
       const res = await axios.post("http://localhost:5000/messages", {
         message,
@@ -45,6 +45,9 @@ function Home() {
     }
   };
 
+  const uploadFile = () => {
+    document.getElementById('attachFile').click();
+  }
   return (
     <div className="chatWrapper">
       {h1Visible && (
@@ -56,11 +59,11 @@ function Home() {
         <div className="chatbox">
           {!reminderHidden && (
             <p id="reminder">
-              Remember, no one will reply to you in this chat. It’s purely a space for your thoughts.{" "}
+              Remember, no one will reply to you in any of these chat. It’s purely a space for your thoughts.{" "}
               <i onClick={() => setReminderHidden(!reminderHidden)} className="fa-solid fa-times"></i>
             </p>
           )}
-          <div className="sentMessages">
+          <div className="sentMessages">            
             {messages.map((msg, i) => (
               <div key={i} className="sentMessage">
                 {msg.Message}
@@ -70,6 +73,12 @@ function Home() {
         </div>
       )}
       <div className="sendWrapper">
+        <div id="fileInput">
+          <input type="file" id="attachFile" style={{ display: "none" }} />
+          <button onClick={uploadFile} className="fileUploadButton">
+            <i className="fa-regular fa-paperclip"></i>
+          </button>
+        </div>
         <input
           id="messageInput"
           name="chatInput"

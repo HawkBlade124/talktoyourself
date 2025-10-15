@@ -1,60 +1,69 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
-export const AuthContext = createContext();
+// Create the context
+const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+// Provider component
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);     // holds the user object
+  const [token, setToken] = useState(null);   // holds the JWT token
   const [loading, setLoading] = useState(true);
 
+  // Load user/token from localStorage on app start
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const localUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-    // ✅ Restore user immediately from localStorage so header doesn't flash "logged out"
-    if (localUser) setUser(JSON.parse(localUser));
-
-    if (token) {
-      axios
-        .get("http://localhost:5000/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => {
-          console.log("Fetched user from /me:", res.data);
-          setUser(res.data);
-          localStorage.setItem("user", JSON.stringify(res.data)); // keep synced
-        })
-        .catch((err) => {
-          console.error("Error fetching /me:", err.message);
-
-          // ❗️ Don’t auto-logout unless 401 (invalid token)
-          if (err.response?.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            setUser(null);
-          }
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+    if (storedUser && storedToken) {
+      setUser(JSON.parse(storedUser));
+      setToken(storedToken);
     }
+
+    setLoading(false);
   }, []);
 
-  const login = (userData, token) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
+  // Login function
+  const login = async (identifier, password) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "https://talktoyourself.space"}/login`, {
+        identifier,
+        password,
+      });
+
+      if (res.data.success) {
+        const { token, user } = res.data;
+        setUser(user);
+        setToken(token);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+        return { success: true };
+      } else {
+        return { success: false, message: "Invalid credentials" };
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      return { success: false, message: err.response?.data?.message || "Login failed" };
+    }
   };
 
+  // Logout function
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     setUser(null);
+    setToken(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
+
+  // Auth header helper
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, authHeader, loading }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
+
+// Hook to use auth context
+export const useAuth = () => useContext(AuthContext);

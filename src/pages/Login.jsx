@@ -10,15 +10,18 @@ function Login(){
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  const trimmedEmail = email.trim();
+  const trimmedPassword = password.trim();
+console.log("API URL:", import.meta.env.VITE_API_URL);
 
-    try {
-      const res = await axios.post("http://localhost:5000/login", {
-        identifier: email,
-        password,
-      });
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
+      identifier: trimmedEmail,
+      password: trimmedPassword,
+    });
 
       if (res.data.success) {
         // Save token & user info

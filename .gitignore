@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 server.js
 .env
+.env.production

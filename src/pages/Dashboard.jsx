@@ -1,8 +1,7 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext.jsx"; // make sure this path matches your file
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Dashboard() {
-  const { user } = useContext(AuthContext);
+   const { user } = useAuth();
 
   if (!user) return <p>No user logged in.</p>;
 
