@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+// ✅ Add this helper ABOVE your component
+function buildApiUrl() {
+  const raw = (import.meta.env.VITE_API_URL || window.location.origin).trim();
+  const base = raw.replace(/\/+$/, "");
+  const hasApi = /\/api$/.test(base);
+  return hasApi ? base : `${base}/api`;
+}
 
 function Home() {
   const [message, setMessage] = useState("");
@@ -7,36 +16,41 @@ function Home() {
   const [h1Visible, setH1Visible] = useState(true);
   const [chatBoxVisible, setChatBoxVisible] = useState(false);
   const [reminderHidden, setReminderHidden] = useState(true);
-  const [messageCount, setMessageCount] = useState(0);
-
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.UserID;
+  const userId = user?.id;
+  const navigate = useNavigate();
+
+  const apiBase = buildApiUrl();
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
     axios
-      .get(`http://localhost:5000/messages/${userId}`)
+      .get(`${apiBase}/messages/${userId}`)
       .then((res) => {
-        if (res.data.success) {
-          setMessages(res.data.messages);
-        }
+        if (res.data.success) setMessages(res.data.messages);
       })
       .catch((err) => console.error("Error loading messages:", err));
   }, [userId]);
 
   const enteredMessage = async () => {
     if (!message.trim()) return;
-    console.log("Sending...", message);
-    setMessages((prev) => [...prev, { Message: message }]); // local UI update
+
+    setMessages((prev) => [...prev, { Message: message }]);
     setMessage("");
     setH1Visible(false);
-    setChatBoxVisible(true);  
+    setChatBoxVisible(true);
     setReminderHidden(false);
+
     try {
-      const res = await axios.post("http://localhost:5000/messages", {
-        message,
+      const res = await axios.post(`${apiBase}/messages`, {
         userId,
+        message,
       });
+
       if (!res.data.success) {
         console.error("Failed to save message:", res.data.error);
       }
@@ -46,32 +60,46 @@ function Home() {
   };
 
   const uploadFile = () => {
-    document.getElementById('attachFile').click();
-  }
+    document.getElementById("attachFile").click();
+  };
+
   return (
     <div className="chatWrapper">
-      {h1Visible && (
-        <div className="initialChatBody">
-          <h1>Welcome To Your Mind</h1>
-        </div>
+      {!reminderHidden && (
+        <p id="reminder">
+          Remember, no one will reply to you in any of these chats. It’s purely
+          a space for your thoughts.{" "}
+          <i
+            onClick={() => setReminderHidden(!reminderHidden)}
+            className="fa-solid fa-times"
+          ></i>
+        </p>
       )}
-      {chatBoxVisible && (
+
+      {messages.length === 0 ? (
+        h1Visible && (
+          <div className="initialChatBody">
+            <h1>Welcome To Your Mind</h1>
+          </div>
+        )
+      ) : (
         <div className="chatbox">
-          {!reminderHidden && (
-            <p id="reminder">
-              Remember, no one will reply to you in any of these chat. It’s purely a space for your thoughts.{" "}
-              <i onClick={() => setReminderHidden(!reminderHidden)} className="fa-solid fa-times"></i>
-            </p>
-          )}
-          <div className="sentMessages">            
-            {messages.map((msg, i) => (
-              <div key={i} className="sentMessage">
-                {msg.Message}
+          <div className="sentMessages">
+            {messages.length === 0 ? (
+              <p>No Messages Yet</p>
+            ) : (
+              <div>
+                {messages.map((msg, i) => (
+                  <div key={i} className="sentMessage">
+                    {msg.Message}
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
       )}
+
       <div className="sendWrapper">
         <div id="fileInput">
           <input type="file" id="attachFile" style={{ display: "none" }} />
@@ -79,6 +107,7 @@ function Home() {
             <i className="fa-regular fa-paperclip"></i>
           </button>
         </div>
+
         <input
           id="messageInput"
           name="chatInput"
@@ -87,7 +116,13 @@ function Home() {
           onKeyDown={(e) => e.key === "Enter" && enteredMessage()}
           placeholder="A Penny For Your Thoughts?"
         />
-        <button onClick={enteredMessage} id="sendChat" className="send" disabled={!message.trim()}>
+
+        <button
+          onClick={enteredMessage}
+          id="sendChat"
+          className="send"
+          disabled={!message.trim()}
+        >
           <i className="fa-solid fa-paper-plane"></i>
         </button>
       </div>

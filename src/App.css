@@ -108,3 +108,15 @@ header {
 .searchMessages input ::placeholder{
 	color: #fff !important;
 }
+.addFolderButton{
+	display:flex;
+	justify-content: center;
+	border:1px solid #fff;
+	max-width:210px;
+	border-radius:15px;
+	padding:15px;	
+}
+.addFolderButton:hover{
+	background:#053250;
+	color:#248eea
+}

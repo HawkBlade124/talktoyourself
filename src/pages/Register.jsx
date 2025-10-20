@@ -18,7 +18,7 @@ function Register() {
 
     setError(""); // Clear previous errors
 
-    fetch("http://localhost:5000/users", {
+    fetch("http://localhost:5000/api/users", {
       method: "POST",
       mode: "cors",
       headers: {

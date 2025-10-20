@@ -1,16 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { buildApiUrl } from "../utils/api";
 
-// Create the context
 const AuthContext = createContext();
 
-// Provider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);     // holds the user object
-  const [token, setToken] = useState(null);   // holds the JWT token
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user/token from localStorage on app start
+  const apiBase = buildApiUrl(); 
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
@@ -23,13 +23,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Login function
   const login = async (identifier, password) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || "https://talktoyourself.space"}/login`, {
-        identifier,
-        password,
-      });
+      const res = await axios.post(`${apiBase}/login`, { identifier, password });
 
       if (res.data.success) {
         const { token, user } = res.data;
@@ -47,15 +43,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function
+
   const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
     setToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    window.location.href = "/login";
   };
 
-  // Auth header helper
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   return (
@@ -65,5 +61,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook to use auth context
 export const useAuth = () => useContext(AuthContext);
