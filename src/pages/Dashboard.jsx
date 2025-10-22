@@ -1,81 +1,197 @@
 import { useAuth } from "../context/AuthContext.jsx";
 import { useState } from "react";
+import { useEffect } from "react";
+import EditModal from "../components/modals/Edit.jsx";
+import DeleteModal from "../components/modals/Delete.jsx";
 
 function Dashboard() {
-  const { user } = useAuth();
-  const { folder } = useAuth();
-  const [error, setError] = useState("");
-  const [folders, setFolders] = useState([]);
+  
+  const { user, folders, setFolders } = useAuth();  
+  const [error, setError] = useState("");  
   const [folderName, setFolderName] = useState("");
   const [folderDescr, setFolderDescr] = useState("");
-  const [flipFolder, setFlipFolder] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState("");
   const folderCount = folders.length;
   const content = folderCount > 0 ? "Folders Found" : "No Folders Found";
   const token = localStorage.getItem("token");
-  
-  if (!user) return null;
 
-  const addFolders = async (e) => {
-    e.preventDefault();
-
-    if (!folderName.trim()) {
-      setError("Folder Name Required");
-      return;
-    }
-
-    setError("");
-
+  useEffect(() => {
+  const fetchFolders = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-           "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          UserID: user.id,
-          FolderName: folderName.trim(),
-          FolderDescr: folderDescr.trim(),
-        }),
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-      console.log("Params:", [user.id, folderName, folderDescr]);
-      console.log("Response:", data);
-
-      if (res.ok) {
-        alert("Folder added!");
-        setFolders((prev) => [...prev, data.newFolder]); // assuming API returns folder
-      } else {
-        setError(data.error || "Cannot add folder. Please check your entry.");
-      }
+      setFolders(Array.isArray(data) ? data : data.folders || data.data || []);
+      console.log("Fetched folders:", data);
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError("An error occurred. Please try again.");
+      console.error("Error fetching folders:", err);
+      setError("Failed to load folders");
     }
-    
   };
-  function showAddFolder() {
-    setFlipFolder((flipFolder) => !flipFolder);    
-  }
-  return (
-    <div className="w-md">
-      <h1>Welcome, {user.Username}!</h1>
-      <h2 className="mt-5 text-2xl">Folders</h2>      
-      <p className="mb-5">{folders.FolderName}</p>
-      {folderCount > 0 && <p>Total Folders: {folderCount}</p>}
-      <div className="addFolderButton">
-        <button onClick={showAddFolder}><i className="text-9xl fa-regular fa-folder-plus"></i></button>
-      </div>
-      {flipFolder && (<form onSubmit={addFolders} className="flex flex-col items-start gap-5 mt-5">
-          <input className="bg-white rounded-md h-8 pl-5 w-full" type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Folder Name" />
-          <textarea className="bg-white rounded-md pl-5 h-15 w-full" type="text" value={folderDescr} onChange={(e) => setFolderDescr(e.target.value)} placeholder="Folder Description" />
-          <button type="submit">Add Folder</button>
-        </form>)}
 
+  fetchFolders();
+}, [token]);
+
+const addFolders = async (e) => {
+  e.preventDefault();
+
+  if (!folderName.trim()) {
+    setError("Folder Name Required");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        FolderName: folderName.trim(),
+        FolderDescr: folderDescr.trim(),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setFolders((prev) => [...prev, data.newFolder]);
+      setShowForm(false);
+      setFolderName("");
+      setFolderDescr("");
+      setError("");
+    } else {
+      setError(data.message || data.error || "Unauthorized or invalid entry.");
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+    setError("An error occurred. Please try again.");
+  }
+};
+const editFolder = async (folderId, newName, newDescr) => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders/${folderId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        FolderName: newName.trim(),
+        FolderDescr: newDescr.trim(),
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {  
+      setFolders((prev) =>
+        prev.map((f) =>
+          f.FolderID === folderId
+            ? { ...f, FolderName: newName, FolderDescr: newDescr }
+            : f
+        )
+      );
+    } else {
+      setError(data.error || "Failed to update folder");
+    }
+  } catch (err) {
+    console.error("Edit error:", err);
+    setError("An error occurred while editing.");
+  }
+};
+
+
+const editSingleFolder = (folder) => {
+  console.log(folder)
+  setSelectedFolder(folder);
+  setFolderName(folder.FolderName);
+  setFolderDescr(folder.FolderDescr);
+  setShowModal(true);
+};
+
+const deleteFolder = async (folderId) => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders/${folderId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      setFolders((prev) => prev.filter((f) => f.FolderID !== folderId));
+    } else {
+      setError(data.error || "Failed to delete folder");
+    }
+  } catch (err) {
+    console.error("Delete error:", err);
+    setError("An error occurred while deleting.");
+  }
+};
+
+const deleteFolderModal = (folder)=>{
+    console.log(folder)
+  setSelectedFolder(folder);
+  setFolderName(folder.FolderName);
+  setFolderDescr(folder.FolderDescr);
+  setShowDeleteModal(true);
+}
+
+if (!user) return null;
+        
+  return (    
+    <div id="dashboard" className="w-full">
+      <EditModal  isOpen={showModal}  onClose={() => setShowModal(false)}  folder={selectedFolder}  onSave={editFolder}/>
+      <DeleteModal  isOpen={showDeleteModal}  onClose={() => setShowDeleteModal(false)}  folder={selectedFolder}  onConfirm={() => deleteFolder(selectedFolder.FolderID)}/>
+
+      <h1>Welcome, {user.Username}!</h1>
+      <div className="flex justify-between">
+      <h2 className="mt-5 text-2xl">Folders</h2>   
+        <div className="addFolderButton flex flex-col">          
+          {!showForm ? (
+            <div className="cursor-pointer" onClick={() => setShowForm(true)}>
+              <i className="text-7xl fa-regular fa-folder-plus"></i>
+            </div>
+            ) : (<form onSubmit={addFolders} className="flex flex-col items-start gap-5 mt-5">
+            <input className="bg-white rounded-md h-8 pl-5 w-full" type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Folder Name" />
+            <textarea className="bg-white rounded-md pl-5 h-15 w-full" type="text" value={folderDescr} onChange={(e) => setFolderDescr(e.target.value)} placeholder="Folder Description" />
+            <button id="addFolderBtn" type="submit">Add Folder</button>
+             <button id="cancelAction" onClick={() => setShowForm(false)}>Cancel</button>
+          </form>)}
+          
+        </div>
+      </div>
+      <div className="flex">              
+      <ul id="folderList" className="grid grid-cols-3 gap-15 w-full text-3xl mb-5 mt-5">
+        {folders.map((f, i) => (
+          <li key={i} className="folderItem w-full flex flex-col items-center justify-between">
+            <i className="text-7xl fa-light fa-folder"></i>
+            <div>{f.FolderName}</div>
+            <div className="text-lg">{f.FolderDescr}</div>
+            <div className="folderFoot flex items-center justify-between w-full mt-5">
+              <div className="contThoughtButton text-base text-green-500 hover:text-green-700 text-nowrap">Continue Thoughts</div>
+              <div className="folderFunctions flex items-center justify-end w-full gap-1">
+                <i
+                  className="text-xl fa-solid fa-pencil cursor-pointer"
+                  onClick={() => editSingleFolder(f)}
+                ></i>
+                <i onClick={() => deleteFolderModal(f)} className="text-xl fa-solid fa-trash cursor-pointer text-red-700"></i>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+      </div> 
+      
+
+      {folderCount > 0 && <p>Total Folders: {folderCount}</p>}
       {error && <p className="text-red-500">{error}</p>}
-      <h2 className="mt-5 text-2xl">Tags</h2>
-      <h2 className="mt-5 text-2xl">Categories</h2>
+      {/* <h2 className="mt-5 text-2xl">Tags</h2> */}
+      {/* <h2 className="mt-5 text-2xl">Categories</h2> */}
     </div>    
   );
 }

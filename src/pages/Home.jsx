@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// ✅ Add this helper ABOVE your component
 function buildApiUrl() {
   const raw = (import.meta.env.VITE_API_URL || window.location.origin).trim();
   const base = raw.replace(/\/+$/, "");
