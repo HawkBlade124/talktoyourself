@@ -1,7 +1,7 @@
 import ReactModal from "react-modal";
 import { useState, useEffect } from "react";
 
-function EditModal({ isOpen, onClose, folder, onSave }) {
+function InfoModal({ isOpen, onClose, folder, onSave }) {
   const [folderName, setFolderName] = useState("");
   const [folderDescr, setFolderDescr] = useState("");
 
@@ -31,16 +31,12 @@ const handleSubmit = (e) => {
           onClick={onClose}
         ></i>
       </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Folder Name" className="bg-white rounded-md p-2 border" />
-        <textarea value={folderDescr} onChange={(e) => setFolderDescr(e.target.value)} placeholder="Folder Description" className="bg-white rounded-md p-2 border" />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded mt-3">
-          Save Changes
-        </button>
-      </form>
+      <div class="flex flex-col">
+        <h2>{folderName}</h2>
+        <p>{folderDescr}</p>
+      </div>
     </ReactModal>
   );
 }
 
-export default EditModal;
+export default InfoModal;

@@ -20,7 +20,7 @@ header a{
 	display:flex;
 	place-items: center;
 	justify-content: center;
-	min-height:84vh;
+	min-height:80vh;
 }
 .chatbox{
   display: flex;
@@ -50,6 +50,9 @@ header a{
 #reminder i{
 	cursor: pointer;
 }
+.chatWrapper{
+	position: relative;
+}
 .sentMessages{	
   display: flex;
   flex-direction: column;
@@ -58,8 +61,9 @@ header a{
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
-  flex: 1;           /* let it take remaining space */
-  padding: 1rem;     /* so messages don’t hug the edges */
+  flex: 1; 
+  padding: 1rem;
+	position:relative;
 }
 .sendWrapper input {
 	width:100%;
@@ -178,7 +182,14 @@ header a{
 	max-height:400px;
 	margin:0 auto;
 	color:#000;
+	border-radius: 15px;
+	position: absolute;
+	left:calc(50% - 450px);
+	top:22%;
 }
 .ReactModal__Overlay{
 	background:rgb(0,0,0,0.8)!important;
+}
+.folderFormInput{
+	border:2px solid oklch(62.3% 0.214 259.815);
 }

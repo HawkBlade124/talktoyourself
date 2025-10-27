@@ -4,13 +4,11 @@ import { useState } from "react";
 import axios from "axios";
 
 function buildApiUrl() {
-  const raw = (import.meta.env.VITE_API_URL || window.location.origin).trim();
-
-  const base = raw.replace(/\/+$/, "");
-  const hasApi = /\/api$/.test(base);
-
-  return hasApi ? base : `${base}/api`;
+  const base = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/+$/, "");
+  return base.includes("/api") ? base : `${base}/api`;
 }
+
+
 
 function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -19,50 +17,39 @@ function Login() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(false);
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess(false);
 
-    const apiBase = buildApiUrl();
-    const url = `${apiBase}/login`;
-    console.log("Login POST →", url);
+  const apiBase = buildApiUrl(); 
+  try {
+    const res = await axios.post(
+      `${apiBase}/login`,   // 👈 Always /api/login
+      { identifier: identifier.trim(), password },
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-try {
-  const res = await axios.post(
-    url,
-    {
-      identifier: identifier.trim(),
-      password,
-    },
-    { headers: { "Content-Type": "application/json" } }
-  );
+    console.log("Response data:", res.data);
 
-  console.log("Response data:", res.data); // 👈 ADD THIS
+    if (res.data?.success) {
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setSuccess(true);
+      window.location.href = "/dashboard";
+      return;
+    }
 
-  const ct = (res.headers?.["content-type"] || "").toLowerCase();
-  if (!ct.includes("application/json")) {
-    throw new Error("Non-JSON response from API (check API URL / proxy).");
+    setError(res.data?.message || "Unexpected API response.");
+  } catch (err) {
+    console.error("Login error:", err);
+    setError(
+      err.response?.data?.message ||
+        err.message ||
+        "Login failed. Please try again."
+    );
   }
-
-  if (res.data?.success) {
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    setSuccess(true);
-     window.location.href = "/dashboard";
-    return;
-  }
-
-  setError(res.data?.message || "Unexpected API response.");
-} catch (err) {
-  console.error("Login error:", err);
-  setError(
-    err.response?.data?.message ||
-      err.message ||
-      "Login failed. Please try again."
-  );
-}
-  };
+};
 
   return (
     <>

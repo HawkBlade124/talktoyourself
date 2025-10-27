@@ -1,27 +1,32 @@
 import { useAuth } from "../context/AuthContext.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import EditModal from "../components/modals/Edit.jsx";
 import DeleteModal from "../components/modals/Delete.jsx";
-
+import AddModal from "../components/modals/Add.jsx";
+import InfoModal from "../components/modals/Info.jsx";
 function Dashboard() {
   
   const { user, folders, setFolders } = useAuth();  
   const [error, setError] = useState("");  
   const [folderName, setFolderName] = useState("");
   const [folderDescr, setFolderDescr] = useState("");
+  
   const [showForm, setShowForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("");
+  
   const folderCount = folders.length;
-  const content = folderCount > 0 ? "Folders Found" : "No Folders Found";
   const token = localStorage.getItem("token");
 
   useEffect(() => {
   const fetchFolders = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/folders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -36,46 +41,10 @@ function Dashboard() {
   fetchFolders();
 }, [token]);
 
-const addFolders = async (e) => {
-  e.preventDefault();
 
-  if (!folderName.trim()) {
-    setError("Folder Name Required");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        FolderName: folderName.trim(),
-        FolderDescr: folderDescr.trim(),
-      }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setFolders((prev) => [...prev, data.newFolder]);
-      setShowForm(false);
-      setFolderName("");
-      setFolderDescr("");
-      setError("");
-    } else {
-      setError(data.message || data.error || "Unauthorized or invalid entry.");
-    }
-  } catch (err) {
-    console.error("Fetch error:", err);
-    setError("An error occurred. Please try again.");
-  }
-};
 const editFolder = async (folderId, newName, newDescr) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders/${folderId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/folders/${folderId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -105,18 +74,9 @@ const editFolder = async (folderId, newName, newDescr) => {
   }
 };
 
-
-const editSingleFolder = (folder) => {
-  console.log(folder)
-  setSelectedFolder(folder);
-  setFolderName(folder.FolderName);
-  setFolderDescr(folder.FolderDescr);
-  setShowModal(true);
-};
-
 const deleteFolder = async (folderId) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/folders/${folderId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/folders/${folderId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -133,6 +93,51 @@ const deleteFolder = async (folderId) => {
   }
 };
 
+const addFolder = async (folderName, folderDescr) => {
+
+  if (!folderName.trim()) {
+    setError("Folder Name Required");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/folders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        FolderName: folderName.trim(),
+        FolderDescr: folderDescr.trim(),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setFolders((prev) => [...prev, data.newFolder]);
+      setShowForm(false);
+      setFolderName("");
+      setFolderDescr("");
+      setError("");
+    } else {
+      setError(data.message || data.error || "Unauthorized or invalid entry.");
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+    setError("An error occurred. Please try again.");
+  }
+};
+
+const editSingleFolder = (folder) => {
+  console.log(folder)
+  setSelectedFolder(folder);
+  setFolderName(folder.FolderName);
+  setFolderDescr(folder.FolderDescr);
+  setShowModal(true);
+};
+
 const deleteFolderModal = (folder)=>{
     console.log(folder)
   setSelectedFolder(folder);
@@ -141,27 +146,32 @@ const deleteFolderModal = (folder)=>{
   setShowDeleteModal(true);
 }
 
+const addFolderModal = () => {
+  setFolderName("");
+  setFolderDescr("");
+  setSelectedFolder(null);
+  setShowAddModal(true);
+};
+
+const infoModal = () =>{
+
+}
+
+
 if (!user) return null;
         
   return (    
     <div id="dashboard" className="w-full">
       <EditModal  isOpen={showModal}  onClose={() => setShowModal(false)}  folder={selectedFolder}  onSave={editFolder}/>
       <DeleteModal  isOpen={showDeleteModal}  onClose={() => setShowDeleteModal(false)}  folder={selectedFolder}  onConfirm={() => deleteFolder(selectedFolder.FolderID)}/>
-
+     <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={(folderName, folderDescr) => addFolder(folderName, folderDescr)}/>
+    <InfoModal />
       <h1>Welcome, {user.Username}!</h1>
       <div className="flex justify-between">
-      <h2 className="mt-5 text-2xl">Folders</h2>   
+        
+      <h2 className="mt-5 text-2xl">Thought Bubbles</h2>   
         <div className="addFolderButton flex flex-col">          
-          {!showForm ? (
-            <div className="cursor-pointer" onClick={() => setShowForm(true)}>
-              <i className="text-7xl fa-regular fa-folder-plus"></i>
-            </div>
-            ) : (<form onSubmit={addFolders} className="flex flex-col items-start gap-5 mt-5">
-            <input className="bg-white rounded-md h-8 pl-5 w-full" type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Folder Name" />
-            <textarea className="bg-white rounded-md pl-5 h-15 w-full" type="text" value={folderDescr} onChange={(e) => setFolderDescr(e.target.value)} placeholder="Folder Description" />
-            <button id="addFolderBtn" type="submit">Add Folder</button>
-             <button id="cancelAction" onClick={() => setShowForm(false)}>Cancel</button>
-          </form>)}
+          <i className="fa-kit text-7xl fa-regular-thought-bubble-circle-plus" onClick={() => addFolderModal()}></i>
           
         </div>
       </div>
@@ -169,17 +179,21 @@ if (!user) return null;
       <ul id="folderList" className="grid grid-cols-3 gap-15 w-full text-3xl mb-5 mt-5">
         {folders.map((f, i) => (
           <li key={i} className="folderItem w-full flex flex-col items-center justify-between">
-            <i className="text-7xl fa-light fa-folder"></i>
+            <div className="flex justify-between w-full">              
+              <i className="fa-solid fa-thought-bubble"></i>
+              <i class="text-xl fa-regular fa-circle-info"></i>
+            </div>
             <div>{f.FolderName}</div>
             <div className="text-lg">{f.FolderDescr}</div>
             <div className="folderFoot flex items-center justify-between w-full mt-5">
-              <div className="contThoughtButton text-base text-green-500 hover:text-green-700 text-nowrap">Continue Thoughts</div>
+              <Link to={`/thought/${encodeURIComponent(f.FolderName)}`} className="contThoughtButton text-base text-green-500 hover:text-green-700 text-nowrap"><i className="fa-regular fa-arrow-right"></i></Link>
               <div className="folderFunctions flex items-center justify-end w-full gap-1">
                 <i
                   className="text-xl fa-solid fa-pencil cursor-pointer"
                   onClick={() => editSingleFolder(f)}
                 ></i>
                 <i onClick={() => deleteFolderModal(f)} className="text-xl fa-solid fa-trash cursor-pointer text-red-700"></i>
+                
               </div>
             </div>
           </li>

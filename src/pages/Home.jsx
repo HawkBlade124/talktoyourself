@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Add from  "../components/modals/Add.jsx";
 
 function buildApiUrl() {
   const raw = (import.meta.env.VITE_API_URL || window.location.origin).trim();
@@ -22,11 +23,6 @@ function Home() {
   const apiBase = buildApiUrl();
 
   useEffect(() => {
-    if (!userId) {
-      navigate("/login");
-      return;
-    }
-
     axios
       .get(`${apiBase}/messages/${userId}`)
       .then((res) => {
@@ -63,7 +59,15 @@ function Home() {
   };
 
   return (
-    <div className="chatWrapper">
+    <div className="chatWrapper w-5xl m-auto">
+      <div className="thoughtToolbar w-2xl m-auto pt-5">
+        <div id="saveChat" className="flex text-xl pr-5">
+          Create Folder
+        </div>
+        <div id="chatFunctions">
+          
+        </div>
+      </div>
       {!reminderHidden && (
         <p id="reminder">
           Remember, no one will reply to you in any of these chats. It’s purely
@@ -76,10 +80,16 @@ function Home() {
       )}
 
       {messages.length === 0 ? (
-        h1Visible && (
-          <div className="initialChatBody">
+        h1Visible && (          
+          <div className="initialChatBody w-2xl m-auto flex flex-col gap-20">
+            <div className="flex gap-5"> 
             <h1>Welcome To Your Mind</h1>
-          </div>
+            <i class="fa-solid fa-thought-bubble text-5xl"></i>                        
+            </div>
+            <div className="text-center">
+              <p>A place to compile all your thoughts and talk to yourself. To begin, just enter a thought in the text bar. No one will reply. This place is purely organization for your thoughts.</p>
+            </div>
+          </div>          
         )
       ) : (
         <div className="chatbox">
@@ -124,6 +134,7 @@ function Home() {
         >
           <i className="fa-solid fa-paper-plane"></i>
         </button>
+
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser(null);
     setToken(null);
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
