@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import axios from "axios";
@@ -20,6 +20,8 @@ function Thought() {
   const [h1Visible, setH1Visible] = useState(true);
   const [chatBoxVisible, setChatBoxVisible] = useState(false);
   const [reminderHidden, setReminderHidden] = useState(true);
+  const [search, setSearch] = useState("");
+
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const navigate = useNavigate();
@@ -29,27 +31,40 @@ const [error, setError] = useState("");
 
   const apiBase = buildApiUrl();
   const { folderName } = useParams();
-
 useEffect(() => {
   const token = localStorage.getItem("token");
   if (!token) {
-    console.error("No token found in localStorage");
+    navigate("/Unauthorized");
     return;
   }
 
-  axios
-    .get(`${apiBase}/messages/${encodeURIComponent(folderName)}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      if (res.data.success) setMessages(res.data.messages);
-    })
-    .catch((err) => {
-      console.error("Error loading messages:", err.response?.data || err.message);
-    });
-}, [folderName]);
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get(`${apiBase}/messages/${encodeURIComponent(folderName)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        setMessages(res.data.messages);
+        if (res.data.folder?.FolderDescr) {
+          setFolderDescription(res.data.folder.FolderDescr);
+        }
+      }
+    } catch (err) {
+      const status = err.response?.status;
+      if (status === 401 || status === 403) {
+        navigate("/Unauthorized");
+      } else if (status === 404) {
+        navigate("/404");
+      } else {
+        console.error("Error fetching messages:", err);
+      }
+    }
+  };
+
+  fetchMessages();
+}, [folderName, navigate]);
+
 
 const enteredMessage = async () => {
   if (!message.trim()) return;
@@ -70,11 +85,7 @@ const enteredMessage = async () => {
     const res = await axios.post(
       `${apiBase}/messages`,
       { folderName, message },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     if (!res.data.success) {
@@ -107,11 +118,17 @@ const deleteMessage = async(messageId) =>{
   }
   }
 
+const handleSearch = async (e) => {
+  const term = e.target.value;
+  setSearch(term);
+  if (!term.trim()) return;
 
-  const uploadFile = () => {
-    document.getElementById("attachFile").click();
-  };
-
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${apiBase}/search?q=${encodeURIComponent(term)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.data.success) setMessages(res.data.messages);
+};
   return (
     <div className="chatWrapper m-auto">
       
@@ -120,19 +137,17 @@ const deleteMessage = async(messageId) =>{
           <ul id="leftHead" className="flex justify-center gap-2 sidebarSection text-xl  rounded-md">
             <li className="w-full cursor-pointer text-center rounded-md pt-2 pb-2"><i className="fa-light fa-list"></i></li>
             <li className="w-full cursor-pointer text-center rounded-md pt-2 pb-2"><i className="fa-light fa-tags w-full cursor-pointer w-md"></i></li>
+            <li className="w-full cursor-pointer text-center rounded-md pt-2 pb-2"><i className="fa-solid fa-plus"></i></li>
           </ul>
           <div className="sidebarList flex flex-col items-start">
             <div className="sidebarHead mt-3 flex justify-between items-center w-full">
-              <h3>Category</h3> <i className="fa-solid fa-plus"></i>
+              <h3>Category</h3> 
             </div>
           </div>
         </Grid>
         <Grid size={6} className="relative h-100">
                     
-          <div className="chatHead flex items-start gap-10 mt-5">
-                  <h2 className="text-xl mb-5">Thoughts about "{folderName}"</h2>
-                   <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md"><i className="fa-solid fa-arrow-left"></i> Back to Dashboard</Link>
-              </div>
+
       {!reminderHidden && (
         <p id="reminder">
           Remember, no one will reply to you in any of these chats. It’s purely
@@ -185,7 +200,7 @@ const deleteMessage = async(messageId) =>{
       <div className="sendWrapper w-full">
         <div id="fileInput">
           <input type="file" id="attachFile" style={{ display: "none" }} />
-          <button onClick={uploadFile} className="fileUploadButton">
+          <button className="fileUploadButton">
             <i className="fa-regular fa-paperclip"></i>
           </button>
         </div>
@@ -203,8 +218,18 @@ const deleteMessage = async(messageId) =>{
 
       </div>
       </Grid>
-      <Grid size="grow" className="p-4">
-        Something here
+      <Grid size="grow" className="p-4">        
+        <div className="thoughtInfoHead flex justify-between">
+          <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md"><i className="fa-solid fa-arrow-left"></i> Back to Dashboard</Link>
+        </div>                
+        <thought-sidebar>
+          <div id="searchFolders">
+            <div id="searchSideBarHead" className="flex gap-2 items-center mt-5">              
+                <i className="fa-solid fa-magnifying-glass"></i><input type="text" value={search} onChange={handleSearch} placeholder="Search Your Thoughts"/>
+
+            </div>
+          </div>
+        </thought-sidebar>
       </Grid>  
       </Grid>
     </div>

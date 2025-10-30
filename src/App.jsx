@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Thoughts from "./pages/Thoughts";
+import PageNotFound from "./pages/PageNotFound";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/thought/:folderName" element={<Thoughts />} />
+        <Route path="/404" element={<PageNotFound />} />
+        <Route path="/Unauthorized" element={<Unauthorized />} />
       </Routes>
       <Footer />
     </>

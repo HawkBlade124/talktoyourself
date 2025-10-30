@@ -7,14 +7,15 @@ export default defineConfig({
   resolve: {
     extensions: ['.js', '.jsx'],
   },
- server: {
-    host:true,
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-      },
+server: {
+  host: true,
+  port: 5173,
+  proxy: {
+    '/api': {
+      target: 'http://146.190.140.194:5000',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/api/, '/api'),
     },
   },
+},
 })
