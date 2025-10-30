@@ -167,12 +167,11 @@ if (!user) return null;
      <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={(folderName, folderDescr) => addFolder(folderName, folderDescr)}/>
     <InfoModal />
       <h1>Welcome, {user.Username}!</h1>
-      <div className="flex justify-between">
-        
-      <h2 className="mt-5 text-2xl">Thought Bubbles</h2>   
+      <h2 className=""></h2>
+      <div className="flex justify-between items-center">        
+      <h2 className="mt-5 text-4xl">Thought Bubbles</h2>   
         <div className="addFolderButton flex flex-col">          
-          <i className="fa-kit text-7xl fa-regular-thought-bubble-circle-plus" onClick={() => addFolderModal()}></i>
-          
+          <i className="fa-kit text-7xl fa-regular-thought-bubble-circle-plus cursor-pointer" onClick={() => addFolderModal()}></i>          
         </div>
       </div>
       <div className="flex">              
@@ -186,7 +185,7 @@ if (!user) return null;
             <div>{f.FolderName}</div>
             <div className="text-lg">{f.FolderDescr}</div>
             <div className="folderFoot flex items-center justify-between w-full mt-5">
-              <Link to={`/thought/${encodeURIComponent(f.FolderName)}`} className="contThoughtButton text-base text-green-500 hover:text-green-700 text-nowrap"><i className="fa-regular fa-arrow-right"></i></Link>
+              <Link to={`/thought/${encodeURIComponent(f.FolderName)}`} className="contThoughtButton text-base text-nowrap"><i className="text-blue-800 fa-regular fa-arrow-right"></i></Link>
               <div className="folderFunctions flex items-center justify-end w-full gap-1">
                 <i
                   className="text-xl fa-solid fa-pencil cursor-pointer"

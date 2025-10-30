@@ -4,6 +4,8 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Add from  "../components/modals/Add.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
+import Grid from "@mui/material/Grid";
+
 
 function buildApiUrl() {
   const raw = (import.meta.env.VITE_API_URL || window.location.origin).trim();
@@ -111,12 +113,26 @@ const deleteMessage = async(messageId) =>{
   };
 
   return (
-    <div className="chatWrapper w-5xl m-auto">
-        <div className="chatHead flex items-center gap-10">
-            <h2 className="text-xl mb-5">Thoughts about "{folderName}"</h2>            
-        </div>
-        <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md"><i className="fa-solid fa-arrow-left"></i> Back to Dashboard</Link>
-
+    <div className="chatWrapper m-auto">
+      
+        <Grid container spacing={3} className="h-100">
+        <Grid size="grow" className="p-4">                                  
+          <ul id="leftHead" className="flex justify-center gap-2 sidebarSection text-xl  rounded-md">
+            <li className="w-full cursor-pointer text-center rounded-md pt-2 pb-2"><i className="fa-light fa-list"></i></li>
+            <li className="w-full cursor-pointer text-center rounded-md pt-2 pb-2"><i className="fa-light fa-tags w-full cursor-pointer w-md"></i></li>
+          </ul>
+          <div className="sidebarList flex flex-col items-start">
+            <div className="sidebarHead mt-3 flex justify-between items-center w-full">
+              <h3>Category</h3> <i className="fa-solid fa-plus"></i>
+            </div>
+          </div>
+        </Grid>
+        <Grid size={6} className="relative h-100">
+                    
+          <div className="chatHead flex items-start gap-10 mt-5">
+                  <h2 className="text-xl mb-5">Thoughts about "{folderName}"</h2>
+                   <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md"><i className="fa-solid fa-arrow-left"></i> Back to Dashboard</Link>
+              </div>
       {!reminderHidden && (
         <p id="reminder">
           Remember, no one will reply to you in any of these chats. It’s purely
@@ -126,8 +142,8 @@ const deleteMessage = async(messageId) =>{
             className="fa-solid fa-times"
           ></i>
         </p>
-      )}
-
+      )}   
+      
       {messages.length === 0 ? (
         h1Visible && (          
           <div className="initialChatBody w-2xl m-auto flex flex-col gap-20">
@@ -166,7 +182,7 @@ const deleteMessage = async(messageId) =>{
         </div> 
       )}
 
-      <div className="sendWrapper">
+      <div className="sendWrapper w-full">
         <div id="fileInput">
           <input type="file" id="attachFile" style={{ display: "none" }} />
           <button onClick={uploadFile} className="fileUploadButton">
@@ -174,14 +190,7 @@ const deleteMessage = async(messageId) =>{
           </button>
         </div>
 
-        <input
-          id="messageInput"
-          name="chatInput"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && enteredMessage()}
-          placeholder="A Penny For Your Thoughts?"
-        />
+        <input id="messageInput" name="chatInput" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && enteredMessage()} placeholder="A Penny For Your Thoughts?" />
 
         <button
           onClick={enteredMessage}
@@ -193,6 +202,11 @@ const deleteMessage = async(messageId) =>{
         </button>
 
       </div>
+      </Grid>
+      <Grid size="grow" className="p-4">
+        Something here
+      </Grid>  
+      </Grid>
     </div>
   );
 }

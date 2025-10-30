@@ -8,9 +8,9 @@ export default defineConfig({
     extensions: ['.js', '.jsx'],
   },
  server: {
+    host:true,
     port: 5173,
     proxy: {
-      // browser calls /api/* → forwarded to your local Node
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
