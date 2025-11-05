@@ -1,7 +1,7 @@
 import ReactModal from 'react-modal';
 import { useState } from 'react';
 
-function DeleteModal({ isOpen, onClose, folder, onConfirm }) {
+function DeleteModal({ isOpen, onClose, thought, onConfirm }) {
   return (
     <ReactModal
       id="deleteModal"
@@ -12,7 +12,7 @@ function DeleteModal({ isOpen, onClose, folder, onConfirm }) {
       <i className="fa-solid fa-xmark" onClick={onClose}></i>
       <div className="confirmation flex flex-col items-center gap-4 p-5">
         <p>
-          Are you sure you want to delete <strong>{folder?.FolderName}</strong>?
+          Are you sure you want to delete <strong>{thought?.thoughtName}</strong>?
         </p>
         <div className="flex gap-3">
           <button

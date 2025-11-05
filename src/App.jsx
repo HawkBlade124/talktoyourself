@@ -8,7 +8,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Thoughts from "./pages/Thoughts";
+import Thought from "./pages/Thought";
 import PageNotFound from "./pages/PageNotFound";
 import Unauthorized from "./pages/Unauthorized";
 
@@ -23,7 +23,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/thought/:folderName" element={<Thoughts />} />
+        <Route path="/thought/:ThoughtName" element={<Thought />} />
         <Route path="/404" element={<PageNotFound />} />
         <Route path="/Unauthorized" element={<Unauthorized />} />
       </Routes>

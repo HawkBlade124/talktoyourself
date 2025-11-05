@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [folders, setFolders] = useState([]);
+  const [Thoughts, setThoughts] = useState([]);
 
   const apiBase = buildApiUrl(); 
 
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   return (
-    <AuthContext.Provider value={{ user, folders, setFolders, token, login, logout, authHeader, loading }}>
+    <AuthContext.Provider value={{ user, Thoughts, setThoughts, token, login, logout, authHeader, loading }}>
       {children}
     </AuthContext.Provider>
   );

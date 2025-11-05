@@ -43,6 +43,7 @@ const handleLogin = async (e) => {
     setError(res.data?.message || "Unexpected API response.");
   } catch (err) {
     console.error("Login error:", err);
+    
     setError(
       err.response?.data?.message ||
         err.message ||

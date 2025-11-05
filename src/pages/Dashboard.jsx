@@ -8,65 +8,65 @@ import AddModal from "../components/modals/Add.jsx";
 import InfoModal from "../components/modals/Info.jsx";
 function Dashboard() {
   
-  const { user, folders, setFolders } = useAuth();  
+  const { user, Thoughts, setThoughts } = useAuth();  
   const [error, setError] = useState("");  
-  const [folderName, setFolderName] = useState("");
-  const [folderDescr, setFolderDescr] = useState("");
+  const [ThoughtName, setThoughtName] = useState("");
+  const [ThoughtDescr, setThoughtDescr] = useState("");
   
   const [showForm, setShowForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
-  const [selectedFolder, setSelectedFolder] = useState("");
+  const [selectedThought, setSelectedThought] = useState("");
   
-  const folderCount = folders.length;
+  const ThoughtCount = Thoughts.length;
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-  const fetchFolders = async () => {
+  const fetchThoughts = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/folders`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/Thoughts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setFolders(Array.isArray(data) ? data : data.folders || data.data || []);
-      console.log("Fetched folders:", data);
+      setThoughts(Array.isArray(data) ? data : data.Thoughts || data.data || []);
+      console.log("Fetched Thoughts:", data);
     } catch (err) {
-      console.error("Error fetching folders:", err);
-      setError("Failed to load folders");
+      console.error("Error fetching Thoughts:", err);
+      setError("Failed to load Thoughts");
     }
   };
 
-  fetchFolders();
+  fetchThoughts();
 }, [token]);
 
 
-const editFolder = async (folderId, newName, newDescr) => {
+const editThought = async (ThoughtId, newName, newDescr) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/folders/${folderId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/thoughts/${ThoughtId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        FolderName: newName.trim(),
-        FolderDescr: newDescr.trim(),
+        ThoughtName: newName.trim(),
+        ThoughtDescr: newDescr.trim(),
       }),
     });
 
     const data = await res.json();
     if (res.ok) {  
-      setFolders((prev) =>
+      setThoughts((prev) =>
         prev.map((f) =>
-          f.FolderID === folderId
-            ? { ...f, FolderName: newName, FolderDescr: newDescr }
+          f.ThoughtID === ThoughtId
+            ? { ...f, ThoughtName: newName, ThoughtDescr: newDescr }
             : f
         )
       );
     } else {
-      setError(data.error || "Failed to update folder");
+      setError(data.error || "Failed to update Thought");
     }
   } catch (err) {
     console.error("Edit error:", err);
@@ -74,18 +74,18 @@ const editFolder = async (folderId, newName, newDescr) => {
   }
 };
 
-const deleteFolder = async (folderId) => {
+const deleteThought = async (ThoughtId) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/folders/${folderId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/thoughts/${ThoughtId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
 
     const data = await res.json();
     if (res.ok) {
-      setFolders((prev) => prev.filter((f) => f.FolderID !== folderId));
+      setThoughts((prev) => prev.filter((f) => f.ThoughtID !== ThoughtId));
     } else {
-      setError(data.error || "Failed to delete folder");
+      setError(data.error || "Failed to delete Thought");
     }
   } catch (err) {
     console.error("Delete error:", err);
@@ -93,33 +93,33 @@ const deleteFolder = async (folderId) => {
   }
 };
 
-const addFolder = async (folderName, folderDescr) => {
+const addThought = async (ThoughtName, ThoughtDescr) => {
 
-  if (!folderName.trim()) {
-    setError("Folder Name Required");
+  if (!ThoughtName.trim()) {
+    setError("Thought Name Required");
     return;
   }
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/folders`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/thoughts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        FolderName: folderName.trim(),
-        FolderDescr: folderDescr.trim(),
+        ThoughtName: ThoughtName.trim(),
+        ThoughtDescr: ThoughtDescr.trim(),
       }),
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      setFolders((prev) => [...prev, data.newFolder]);
+      setThoughts((prev) => [...prev, data.newThought]);
       setShowForm(false);
-      setFolderName("");
-      setFolderDescr("");
+      setThoughtName("");
+      setThoughtDescr("");
       setError("");
     } else {
       setError(data.message || data.error || "Unauthorized or invalid entry.");
@@ -130,26 +130,26 @@ const addFolder = async (folderName, folderDescr) => {
   }
 };
 
-const editSingleFolder = (folder) => {
-  console.log(folder)
-  setSelectedFolder(folder);
-  setFolderName(folder.FolderName);
-  setFolderDescr(folder.FolderDescr);
+const editSingleThought = (Thought) => {
+  console.log(Thought)
+  setSelectedThought(Thought);
+  setThoughtName(Thought.ThoughtName);
+  setThoughtDescr(Thought.ThoughtDescr);
   setShowModal(true);
 };
 
-const deleteFolderModal = (folder)=>{
-    console.log(folder)
-  setSelectedFolder(folder);
-  setFolderName(folder.FolderName);
-  setFolderDescr(folder.FolderDescr);
+const deleteThoughtModal = (Thought)=>{
+    console.log(Thought)
+  setSelectedThought(Thought);
+  setThoughtName(Thought.ThoughtName);
+  setThoughtDescr(Thought.ThoughtDescr);
   setShowDeleteModal(true);
 }
 
-const addFolderModal = () => {
-  setFolderName("");
-  setFolderDescr("");
-  setSelectedFolder(null);
+const addThoughtModal = () => {
+  setThoughtName("");
+  setThoughtDescr("");
+  setSelectedThought(null);
   setShowAddModal(true);
 };
 
@@ -162,36 +162,36 @@ if (!user) return null;
         
   return (    
     <div id="dashboard" className="w-full">
-      <EditModal  isOpen={showModal}  onClose={() => setShowModal(false)}  folder={selectedFolder}  onSave={editFolder}/>
-      <DeleteModal  isOpen={showDeleteModal}  onClose={() => setShowDeleteModal(false)}  folder={selectedFolder}  onConfirm={() => deleteFolder(selectedFolder.FolderID)}/>
-     <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={(folderName, folderDescr) => addFolder(folderName, folderDescr)}/>
+      <EditModal  isOpen={showModal}  onClose={() => setShowModal(false)}  Thought={selectedThought}  onSave={editThought}/>
+      <DeleteModal  isOpen={showDeleteModal}  onClose={() => setShowDeleteModal(false)}  Thought={selectedThought}  onConfirm={() => deleteThought(selectedThought.ThoughtID)}/>
+     <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={(ThoughtName, ThoughtDescr) => addThought(ThoughtName, ThoughtDescr)}/>
     <InfoModal />
       <h1>Welcome, {user.Username}!</h1>
       <h2 className=""></h2>
       <div className="flex justify-between items-center">        
       <h2 className="mt-5 text-4xl">Thought Bubbles</h2>   
-        <div className="addFolderButton flex flex-col">          
-          <i className="fa-kit text-7xl fa-regular-thought-bubble-circle-plus cursor-pointer" onClick={() => addFolderModal()}></i>          
+        <div className="addThoughtButton flex flex-col">          
+          <i className="fa-kit text-7xl fa-regular-thought-bubble-circle-plus cursor-pointer" onClick={() => addThoughtModal()}></i>          
         </div>
       </div>
       <div className="flex">              
-      <ul id="folderList" className="grid grid-cols-3 gap-15 w-full text-3xl mb-5 mt-5">
-        {folders.map((f, i) => (
-          <li key={i} className="folderItem w-full flex flex-col items-center justify-between">
+      <ul id="ThoughtList" className="grid grid-cols-3 gap-15 w-full text-3xl mb-5 mt-5">
+        {Thoughts.map((f, i) => (
+          <li key={i} className="ThoughtItem w-full flex flex-col items-center justify-between">
             <div className="flex justify-between w-full">              
               <i className="fa-solid fa-thought-bubble"></i>
               <i class="text-xl fa-regular fa-circle-info"></i>
             </div>
-            <div>{f.FolderName}</div>
-            <div className="text-lg">{f.FolderDescr}</div>
-            <div className="folderFoot flex items-center justify-between w-full mt-5">
-              <Link to={`/thought/${encodeURIComponent(f.FolderName)}`} className="contThoughtButton text-base text-nowrap"><i className="text-blue-800 fa-regular fa-arrow-right"></i></Link>
-              <div className="folderFunctions flex items-center justify-end w-full gap-1">
+            <div>{f.ThoughtName}</div>
+            <div className="text-lg">{f.thoughtDescr}</div>
+            <div className="ThoughtFoot flex items-center justify-between w-full mt-5">
+              <Link to={`/thought/${encodeURIComponent(f.ThoughtName)}`} className="contThoughtButton text-base text-nowrap"><i className="text-blue-800 fa-regular fa-arrow-right"></i></Link>
+              <div className="ThoughtFunctions flex items-center justify-end w-full gap-1">
                 <i
                   className="text-xl fa-solid fa-pencil cursor-pointer"
-                  onClick={() => editSingleFolder(f)}
+                  onClick={() => editSingleThought(f)}
                 ></i>
-                <i onClick={() => deleteFolderModal(f)} className="text-xl fa-solid fa-trash cursor-pointer text-red-700"></i>
+                <i onClick={() => deleteThoughtModal(f)} className="text-xl fa-solid fa-trash cursor-pointer text-red-700"></i>
                 
               </div>
             </div>
@@ -201,7 +201,7 @@ if (!user) return null;
       </div> 
       
 
-      {folderCount > 0 && <p>Total Folders: {folderCount}</p>}
+      {ThoughtCount > 0 && <p>Total Thoughts: {ThoughtCount}</p>}
       {error && <p className="text-red-500">{error}</p>}
       {/* <h2 className="mt-5 text-2xl">Tags</h2> */}
       {/* <h2 className="mt-5 text-2xl">Categories</h2> */}

@@ -66,10 +66,10 @@ header a{
   justify-content:space-between;
   flex-grow: 1;
   overflow-y: auto; 
-  width: 100%;
- 
+  width: 100%; 
   margin: 0 auto;
   padding: 1rem;
+	margin-top:17px;
 }
 .sendWrapper input {
 	width:100%;
@@ -202,10 +202,10 @@ height:86vh;
 #leftHead {
 	padding:5px;
 }
-#leftHead li{
+#leftHead div{
 	border: 2px solid #0460D9;
 }
-#leftHead li:hover{
+#leftHead div:hover{
 	background:#0460D9;
 	color:#01050e
 }
@@ -214,5 +214,19 @@ height:86vh;
 	padding-bottom: 5px;
 }
 #searchSideBarHead input::placeholder{
+	color:#0460D9;
+}
+.addButton{
+	border: 2px solid #0460D9;
+}
+
+.leftSidebarHead {
+	border-top:2px solid #fff;
+	padding-top:25px;	
+}
+.leftSideField{
+	border-bottom:1px solid #0460D9;
+}
+.leftSideField::placeholder{
 	color:#0460D9;
 }
