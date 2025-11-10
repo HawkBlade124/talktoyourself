@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; // assuming you already have this
 
 function Register() {
   const [Username, setName] = useState("");
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfirmPassword, setConfirmPassword] = useState("");
-  const [Tier] = useState("Free"); // Remove setTier since it's not user-editable
+  const [Tier] = useState("Free");
   const [Error, setError] = useState("");
 
-  const registerUser = (e) => {
+  const navigate = useNavigate();
+  const { setUser } = useAuth(); // from your AuthContext
+
+  const registerUser = async (e) => {
     e.preventDefault();
 
     if (Password !== ConfirmPassword) {
@@ -16,36 +21,52 @@ function Register() {
       return;
     }
 
-    setError(""); // Clear previous errors
+    setError("");
 
-    fetch("http://localhost:5000/api/users", {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Username: Username.trim(),
-        Email: Email.trim(),
-        Password: Password.trim(),
-        Tier: Tier, // Include Tier directly
-      }),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        console.log("Response:", data);
-        if (res.ok) {
-          // Optionally redirect or show success message
-          alert("Registration successful!");
-        } else {
-          setError(data.error || "Registration failed");
-        }
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setError("An error occurred. Please try again.");
+    try {
+      const res = await fetch("http://localhost:5000/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Username: Username.trim(),
+          Email: Email.trim(),
+          Password: Password.trim(),
+          Tier
+        }),
       });
+
+      const data = await res.json();
+      console.log("Response:", data);
+
+      if (!res.ok) {
+        setError(data.error || "Registration failed");
+        return;
+      }
+
+      const loginRes = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: Email.trim(),
+          password: Password.trim(),
+        }),
+      });
+
+      const loginData = await loginRes.json();
+      if (!loginRes.ok) {
+        setError(loginData.error || "Auto-login failed");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
+
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError("An error occurred. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -56,19 +77,21 @@ function Register() {
     }
   }, [Password, ConfirmPassword]);
 
+
   return (
-    <div className="flex w-full justify-center gap-10 max-w-150 m-auto">
+    <div id="resReg" className="grid grid-cols-2 w-full items-center max-w-3xl m-auto mt-5">
       <div className="hook">
         <div className="hookPara">
           <h1>Why Sign Up?</h1>
           <p>
-            Signing up for an account gives you multiple benefits including (but
+            Signing up for a free account gives you multiple benefits including (but
             not limited to):
           </p>
           <ul id="hookList" className="p-0 flex flex-col gap-5 mt-10">
-            <li>Saving your links</li>
-            <li>Journal Writing</li>
-            <li>Attaching Images</li>
+            <li>Holding 5 thoughts at a time</li>
+            <li>Favoriting your thoughts</li>
+            <li>Sorting thoughts into categories</li>
+            <li>And more!</li>
           </ul>
         </div>
       </div>

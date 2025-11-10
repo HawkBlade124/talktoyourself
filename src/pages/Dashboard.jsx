@@ -26,7 +26,7 @@ function Dashboard() {
   useEffect(() => {
   const fetchThoughts = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/Thoughts`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/Thoughts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -180,7 +180,7 @@ if (!user) return null;
           <li key={i} className="ThoughtItem w-full flex flex-col items-center justify-between">
             <div className="flex justify-between w-full">              
               <i className="fa-solid fa-thought-bubble"></i>
-              <i class="text-xl fa-regular fa-circle-info"></i>
+              <i className="text-xl fa-regular fa-circle-info"></i>
             </div>
             <div>{f.ThoughtName}</div>
             <div className="text-lg">{f.thoughtDescr}</div>

@@ -56,36 +56,18 @@ const handleLogin = async (e) => {
     <>
       <div className="bodyHeight">
         <div id="login" className="w-full flex justify-center">
-          <div id="loginWrapper" className="justify-center">
+          <div id="loginWrapper" className="flex flex-col justify-center gap-6">
+            <h1> Login</h1>
             <form className="flex flex-col w-xs gap-5" onSubmit={handleLogin}>
               <div className="flex items-center bg-white rounded-md h-8">
                 <i className="fa-regular fa-user inputIcons"></i>
-                <input
-                  type="text"
-                  value={identifier}
-                  className="rounded-md h-8 pl-5 w-full"
-                  name="identifier"
-                  placeholder="Username or Email"
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  required
-                />
+                <input type="text" value={identifier} className="rounded-md h-8 pl-5 w-full" name="identifier" placeholder="Username or Email" onChange={(e) => setIdentifier(e.target.value)} required />
               </div>
               <div className="flex items-center bg-white rounded-md h-8">
                 <i className="fa-regular fa-lock inputIcons"></i>
-                <input
-                  type="password"
-                  value={password}
-                  className="rounded-md h-8 pl-5 w-full"
-                  name="password"
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <input type="password" value={password} className="rounded-md h-8 pl-5 w-full" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
               </div>
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-400 hover:border-sky-500"
-              >
+              <button type="submit" className="bg-green-500 hover:bg-green-400 hover:border-sky-500 p-2 rounded-md cursor-pointer" >
                 Login
               </button>
               {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
@@ -93,7 +75,7 @@ const handleLogin = async (e) => {
                 <p className="text-green-600 text-sm mt-3">Login successful!</p>
               )}
             </form>
-            Don't Have An Account? <Link to="/register">Register For One!</Link>
+            <div className="flex justify-between">Don't Have An Account? <Link to="/register">Register For One!</Link></div>
           </div>
         </div>
       </div>

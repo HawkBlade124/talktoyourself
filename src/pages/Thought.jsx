@@ -37,6 +37,8 @@ function Thought() {
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);  
   const [deleteCat, setDeleteCat] = useState("");
+  const [showTab, setShowTab] = useState("main");
+
 const [hoveredId, setHoveredId] = useState(null);
   const apiBase = buildApiUrl();
   const { ThoughtName } = useParams();
@@ -274,81 +276,26 @@ useEffect(() => {
 
   fetchTags();
 }, [ThoughtID]);
+
+const switchTabs = async () => {
+
+}
   return (
-    <div className="chatWrapper m-auto">
-      
-  <Grid container spacing={3} className="h-100">
-    <Grid size="grow" className="p-4">
-      <div id="leftHead" className="flex justify-center gap-2 sidebarSection text-xl rounded-md">
-        <div className="w-full cursor-pointer text-center rounded-md pt-2 pb-2" onClick={() => setSwitchBtn(true)}>
-          <i className="fa-light fa-list"></i>
-        </div>
-        <div className="w-full cursor-pointer text-center rounded-md pt-2 pb-2" onClick={() => setSwitchBtn(false)}>
-          <i className="fa-light fa-tags"></i>
-        </div>
+    <div className="flex m-auto">      
+      <div id="leftSidebar">
+        <div className="tab" onClick={() => setShowTab("main")}>Main Detail Page</div>
+        <div className="tab" onClick={() => setShowTab("thought")}>Thought input</div>
+        <div className="tab" onClick={() => setShowTab("categories")}>Categories/tags</div>
+        <Link to="/dashboard">Back To Thought bank</Link>
       </div>
-
-      {switchBtn ? (
-        <div className="sidebarList flex flex-col items-start">
-          <div className="leftSidebarHead mt-6 flex justify-between items-center w-full gap-10">
-            <h3 className="text-2xl">Categories</h3>
+      <div className="flex flex-col w-full">
+        {showTab === "main" && (
+          <div id="mainDetailPage">
+            Main Details
           </div>
-          <div id="categoryList" className="">
-            {categories.length === 0 ?(
-              <p>No categories added. Please use the field below to add one.</p>
-            ) : (
-              <div className="categoryName">
-                {categories.map((cat, i) => (
-                  <div key={i} className="flex flex-col">
-                    <div className="flex justify-end items-center gap-5">
-                        <div className="category">
-                          {cat.CategoryName} <i className="fa-solid fa-xmark" onClick={() => deleteCategory(cat.CategoryID)}></i>
-                          
-                        </div>
-                    </div>
-                  </div>                  
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="showField flex justify-between w-full mt-5">
-            <input className="leftSideField" type="text" name="category" placeholder="New Category" value={addCat} onChange={(e) => setCat(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addCategory()}/>
-            <button type="submit" onClick={addCategory} className="addButton rounded-md pr-5 pl-5 pt-1 pb-1"><i className="fa-solid fa-plus"></i></button>            
-          </div>                        
-        </div>
-      ) : (
-        <div className="sidebarList flex flex-col items-start">
-          <div className="leftSidebarHead mt-6 flex justify-between items-center w-full gap-10">
-            <h3 className="text-2xl">Tags</h3>
-          </div>
-          <div id="tagList" className="">
-            {tags.length === 0 ?(
-              <p>No tags added. Please use the field below to add one.</p>
-            ) : (
-              <div className="categoryName">
-                {tags.map((tag, i) => (
-                  <div key={i} className="flex flex-col">
-                    <div className="flex justify-end items-center gap-5">
-                        <div className="category">
-                          {tag.TagName} <i className="fa-solid fa-xmark" onClick={() => deleteTag(tag.TagID)}></i>
-                          
-                        </div>
-                    </div>
-                  </div>                  
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="showField flex justify-between w-full mt-5">
-            <input className="leftSideField" type="text" name="category" placeholder="New Tag" value={addTag} onChange={(e) => setTag(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addTags()} />
-            <button onClick={addTags} className="addButton rounded-md pr-5 pl-5 pt-1 pb-1"><i className="fa-solid fa-plus"></i></button>
-          </div>
-          </div>
-      )}
-    </Grid>
-        <Grid size={6} className="relative">
-                    
-
+        )}
+      {showTab === "thought" && (
+      <div id="thoughtTab">
       {!reminderHidden && (
         <p id="reminder">
           Remember, no one will reply to you in any of these chats. It’s purely
@@ -416,25 +363,88 @@ useEffect(() => {
 
         <input id="messageInput" name="chatInput" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && enteredMessage()} placeholder="A Penny For Your Thoughts?" />
 
-        <button
-          onClick={enteredMessage}
-          id="sendChat"
-          className="send"
-          disabled={!message.trim()}
-        >
+        <button onClick={enteredMessage} id="sendChat" className="send" disabled={!message.trim()}>
           <i className="fa-solid fa-paper-plane"></i>
         </button>
-
       </div>
-      </Grid>
-      <Grid size="grow" className="p-4">        
+    </div>
+      )}
+      {showTab === "categories" && (
+          <div id="categoryTab">
+        <div className="flex justify-center gap-2 sidebarSection text-xl rounded-md">
+          <div className="w-full cursor-pointer text-center rounded-md pt-2 pb-2" onClick={() => setSwitchBtn(true)}>
+            <i className="fa-light fa-list"></i>
+          </div>
+          <div className="w-full cursor-pointer text-center rounded-md pt-2 pb-2" onClick={() => setSwitchBtn(false)}>
+            <i className="fa-light fa-tags"></i>
+          </div>
+        </div>      
+        {switchBtn ? (
+          <div className="sidebarList flex flex-col items-start">
+            <div className="leftSidebarHead mt-6 flex justify-between items-center w-full gap-10">
+              <h3 className="text-2xl">Categories</h3>
+            </div>
+            <div id="categoryList" className="">
+              {categories.length === 0 ?(
+                <p>No categories added. Please use the field below to add one.</p>
+              ) : (
+                <div className="categoryName">
+                  {categories.map((cat, i) => (
+                    <div key={i} className="flex flex-col">
+                      <div className="flex justify-end items-center gap-5">
+                          <div className="category">
+                            {cat.CategoryName} <i className="fa-solid fa-xmark" onClick={() => deleteCategory(cat.CategoryID)}></i>
+                            
+                          </div>
+                      </div>
+                    </div>                  
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="showField flex justify-between w-full mt-5">
+              <input className="leftSideField" type="text" name="category" placeholder="New Category" value={addCat} onChange={(e) => setCat(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addCategory()}/>
+              <button type="submit" onClick={addCategory} className="addButton rounded-md pr-5 pl-5 pt-1 pb-1"><i className="fa-solid fa-plus"></i></button>            
+            </div>                        
+          </div>
+        ) : (
+          <div className="sidebarList flex flex-col items-start">
+            <div className="leftSidebarHead mt-6 flex justify-between items-center w-full gap-10">
+              <h3 className="text-2xl">Tags</h3>
+            </div>
+            <div id="tagList" className="">
+              {tags.length === 0 ?(
+                <p>No tags added. Please use the field below to add one.</p>
+              ) : (
+                <div className="categoryName">
+                  {tags.map((tag, i) => (
+                    <div key={i} className="flex flex-col">
+                      <div className="flex justify-end items-center gap-5">
+                          <div className="category">
+                            {tag.TagName} <i className="fa-solid fa-xmark" onClick={() => deleteTag(tag.TagID)}></i>
+                            
+                          </div>
+                      </div>
+                    </div>                  
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="showField flex justify-between w-full mt-5">
+              <input className="leftSideField" type="text" name="category" placeholder="New Tag" value={addTag} onChange={(e) => setTag(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addTags()} />
+              <button onClick={addTags} className="addButton rounded-md pr-5 pl-5 pt-1 pb-1"><i className="fa-solid fa-plus"></i></button>
+            </div>
+            </div>
+        )}
+      </div> 
+      )}
         <div className="thoughtInfoHead flex justify-between">
           <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md"><i className="fa-solid fa-arrow-left"></i> Back to Dashboard</Link>
         </div>                
         <thought-sidebar>
           <div id="searchThoughts">
             <div id="searchSideBarHead" className="flex gap-2 items-center mt-5">              
-                <i className="fa-solid fa-magnifying-glass"></i><input type="text" value={search} onChange={handleSearch} placeholder="Search Your Thoughts"/>
+                <i className="fa-solid fa-magnifying-glass"></i><input type="text" className="box-border" value={search} onChange={handleSearch} placeholder="Search Your Thoughts"/>
 
             </div>
 {search.trim() ? (
@@ -466,15 +476,13 @@ useEffect(() => {
   </div>
 ) : (
   <div className="defaultSidebar mt-3 text-gray-600 text-sm">
-    <p>Search your thoughts across all Thoughts.</p>
-    <p>Or browse your categories on the left.</p>
+    <p>Search across all your thoughts.</p>    
   </div>
 )}
 
           </div>
         </thought-sidebar>
-      </Grid>  
-      </Grid>
+      </div>
     </div>
   );
 }

@@ -3,18 +3,16 @@
   width:100%;
 }
 header {
-	display:flex;
-	justify-content: space-between;
 	width:100%;
 	background:#0460D9;
-	padding: 0 2rem	
 }
 header a{
  color:#021F59
 }
 .userSpace a{
 	display:block;
-	padding: 15px 0
+	padding: 15px 0;
+	color:#fff;
 }
 .initialChatBody {
 	display:flex;
@@ -108,12 +106,18 @@ height:90vh
 .inputIcons {
 	color:#002238;		
 }
+#hookList li{
+	display:flex;
+	align-items: center;
+}
 #hookList li:before{
-  font-family: "Font Awesome 6 Pro";
+  font-family: "Font Awesome 7 Pro";
   font-weight: 400;
   content: '\f14a';
   display: inline-block;
   width: 1em;
+	color:green;
+	font-size:21px;
 	margin-right: 0.5em;
 }
 .searchMessages input{
@@ -229,4 +233,66 @@ height:86vh;
 }
 .leftSideField::placeholder{
 	color:#0460D9;
+}
+.mobileHeader{
+	display:none;
+}
+@media screen and (max-width:800px) {	
+	.mobileHeader{
+		display:grid;		
+	}
+	.desktopHeader{
+		display:none;
+	}
+	.hamburger{
+		margin-bottom:5px;
+		cursor: pointer;
+	}
+	.bars {
+		background: #fff;
+		height:2px;
+		margin-top: 5px;
+		width: 25px;
+	}	
+	.userSpace{
+		flex-direction: column;
+		position:absolute;	
+		background:#0460D9;
+		right:0;
+		top:0;
+		width:250px;		
+		height:100vh;
+		box-sizing:border-box;
+		align-items: flex-start;	
+	}
+	.userSpace a{
+		background:#004bae;
+		color:#fff;
+		display:flex;
+		width: 100%;
+		padding-left:25px;
+		border-bottom:1px solid #003a85					
+	}
+	.userSpace a:focus{
+		background:#0460D9;
+	}
+	.flyoutNavHead{
+		display:flex;
+		justify-content: flex-end;
+		width:100%;	
+		padding-right:15px;
+		padding-bottom:10px;
+		padding-top:10px;
+	}
+	.bodyOverlay{
+		background: rgb(0,0,0,0.8);
+		position:absolute;
+	}
+	#resReg{
+		grid-template-columns:1fr;
+		padding:0 2%;
+		gap:5px;
+		max-width:500px;
+		margin-bottom:50px
+	}
 }

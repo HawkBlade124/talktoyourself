@@ -9,7 +9,7 @@ function Home() {
         <section id="hero" className="flex items-center justify-center m-auto">
           <h1>Talk to yourself. Your thought organizer tool.</h1>
         </section>        
-        <div className="w-5xl auto ">
+        <div className="auto ">
           <section>
             <h2>What is this tool?</h2>
             <div className="">
