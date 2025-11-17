@@ -9,9 +9,9 @@ function Register() {
   const [ConfirmPassword, setConfirmPassword] = useState("");
   const [Tier] = useState("Free");
   const [Error, setError] = useState("");
-
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useAuth(); // from your AuthContext
+  const { setUser } = useAuth();
 
   const registerUser = async (e) => {
     e.preventDefault();
@@ -99,45 +99,24 @@ function Register() {
       <form onSubmit={registerUser} className="flex flex-col w-full">
         <div className="flex bg-white gap-x-5 mb-5 h-8 items-center rounded-md pl-2">
           <i className="fa-regular fa-user inputIcons p-1"></i>
-          <input
-            type="text"
-            value={Username}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Username"
-            className="w-full"
-          />
+          <input type="text" value={Username} onChange={(e) => setName(e.target.value)} placeholder="Username" className="w-full" />
         </div>
 
         <div className="flex bg-white gap-5 mb-5 h-9 items-center rounded-md pl-2">
           <i className="fa-regular fa-envelope inputIcons p-1"></i>
-          <input
-            type="email"
-            value={Email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full"
-          />
+          <input type="email" value={Email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full" />
         </div>
 
         <div className="flex bg-white gap-5 mb-5 h-9 items-center rounded-md pl-2">
           <i className="fa-regular fa-lock inputIcons p-1"></i>
-          <input
-            type="password"
-            value={Password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full"
-          />
+          <input type={show ? "text" : "password"} value={Password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full" />
+          <i className={`inputIcons fa-regular ${show ? "fa-eye-slash" : "fa-eye"} mr-2 cursor-pointer `}  onClick={() => setShow(!show)}></i>
         </div>
 
         <div className="flex bg-white gap-5 mb-5 h-9 items-center rounded-md pl-2">
-          <input
-            type="password"
-            value={ConfirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm Password"
-            className="w-full"
-          />
+          <i className="fa-regular fa-lock inputIcons p-1"></i>
+          <input type="password" value={ConfirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" className="w-full" />
+          <i className={`inputIcons fa-regular mr-2 ${show ? "fa-eye-slash" : "fa-eye"}`}></i>
         </div>
 
         {Error && (

@@ -15,6 +15,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [rememberMe, setRememberMe] = useState("");
   const navigate = useNavigate();
 
 const handleLogin = async (e) => {
@@ -25,20 +26,29 @@ const handleLogin = async (e) => {
   const apiBase = buildApiUrl(); 
   try {
     const res = await axios.post(
-      `${apiBase}/login`,   // 👈 Always /api/login
+      `${apiBase}/login`,
       { identifier: identifier.trim(), password },
       { headers: { "Content-Type": "application/json" } }
-    );
+    );    
 
-    console.log("Response data:", res.data);
+if (res.data?.success) {
+  if (rememberMe) {
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+  } else {
+    sessionStorage.setItem("token", res.data.token);
+    sessionStorage.setItem("user", JSON.stringify(res.data.user));
+  }
 
-    if (res.data?.success) {
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      setSuccess(true);
-      window.location.href = "/dashboard";
-      return;
-    }
+  setSuccess(true);
+  navigate("/dashboard");
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 50);
+
+  return;
+}
 
     setError(res.data?.message || "Unexpected API response.");
   } catch (err) {
@@ -66,10 +76,12 @@ const handleLogin = async (e) => {
               <div className="flex items-center bg-white rounded-md h-8">
                 <i className="fa-regular fa-lock inputIcons"></i>
                 <input type="password" value={password} className="rounded-md h-8 pl-5 w-full" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+                <i className="fa-solid fa-eye"></i>
               </div>
+              <div id="rememberMe">Remember Me? <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} name="remember" /></div>
               <button type="submit" className="bg-green-500 hover:bg-green-400 hover:border-sky-500 p-2 rounded-md cursor-pointer" >
                 Login
-              </button>
+              </button>              
               {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
               {success && (
                 <p className="text-green-600 text-sm mt-3">Login successful!</p>

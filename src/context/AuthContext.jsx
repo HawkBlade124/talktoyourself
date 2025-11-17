@@ -11,18 +11,15 @@ export const AuthProvider = ({ children }) => {
   const [Thoughts, setThoughts] = useState([]);
 
   const apiBase = buildApiUrl(); 
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
-
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-    }
-
-    setLoading(false);
-  }, []);
+useEffect(() => {
+  const storedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
+  const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+  if (storedToken && storedUser) {
+    setUser(JSON.parse(storedUser));
+    setToken(storedToken);
+  }
+  setLoading(false);
+}, []);
 
   const login = async (identifier, password) => {
     try {
@@ -34,7 +31,6 @@ export const AuthProvider = ({ children }) => {
         setToken(token);
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", token);
-        return { success: true };
       } else {
         return { success: false, message: "Invalid credentials" };
       }
@@ -45,18 +41,20 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setToken(null);
-    window.location.href = "/";
-  };
+const logout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("user");
+  setUser(null);
+  setToken(null);
+  window.location.href = "/";
+};
 
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   return (
-    <AuthContext.Provider value={{ user, Thoughts, setThoughts, token, login, logout, authHeader, loading }}>
+    <AuthContext.Provider value={{ user, Thoughts, setThoughts, token, login, logout, authHeader, loading, setUser }}>
       {children}
     </AuthContext.Provider>
   );
