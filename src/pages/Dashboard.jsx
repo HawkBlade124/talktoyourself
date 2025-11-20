@@ -9,7 +9,7 @@ import InfoModal from "../components/modals/Info.jsx";
 
 function Dashboard() {
   
-  const { user, Thoughts, setThoughts, token, loading } = useAuth();
+  const { user, Thoughts, setThoughts, token, loading, logout } = useAuth();
 
   const [error, setError] = useState("");  
   const [ThoughtName, setThoughtName] = useState("");
@@ -226,7 +226,7 @@ if (!user) return null;
         <div className="sidebarLink"><i className="fa-regular fa-bullseye-arrow"></i> Goals</div>
         <hr></hr>
         <div className="sidebarLink"><i className="fa-regular fa-cog"></i> Settings</div>
-        <div className="sidebarLink"><i className="fa-regular fa-left-from-bracket"></i> Logout</div>
+        <div className="sidebarLink"  onClick={logout}><i className="fa-regular fa-left-from-bracket"></i> Logout</div>
       </div>
       <div className="rightScreen w-full pr-5 pt-5">
       <div id="homeHead" className="flex items-center gap-5">

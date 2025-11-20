@@ -4,10 +4,10 @@
 }
 header {
 	width:100%;
-	background:#0460D9;
+	background:#004346;
 }
 header a{
- color:#021F59
+ color:#09bc8a;
 }
 .userSpace a{
 	display:block;
@@ -67,7 +67,7 @@ header a{
 	margin-top:17px;
 }
 .sendWrapper {
-	background:#2b2a33;	
+	background:#172a3a;	
 	display:flex;
 	align-items: center;	
 	margin:15px auto;
@@ -95,7 +95,7 @@ height:90vh
 	display: none;
 }
 .sentMessage{
-	background-color: #003a85;
+	background-color: #004346;
 	margin:10px 0;
 	padding:7px 15px;
 	border-radius: 15px;
@@ -216,8 +216,11 @@ height:86vh;
 	border-bottom:1px solid #0460D9;
 	padding-bottom: 5px;
 }
+#searchSideBarHead input{
+	color:#09bc8a;
+}
 #searchSideBarHead input::placeholder{
-	color:#0460D9;
+	color:#09bc8a;
 }
 .addButton{
 	border: 2px solid #0460D9;
@@ -238,9 +241,10 @@ height:86vh;
 }
 
 .sidebar {
+	display:flex;
 	width:100%;
 	max-width: 250px;
-	background-color:#151718;			
+	background-color:#172a3a;			
 }
 .sidebarLink{
 	padding:10px 15px;	
@@ -263,53 +267,26 @@ height:86vh;
 	padding:20px;
 }
 .editGroup{
-	color:#6ECBFF
+	color:#09bc8a
 }
 .sidebarSection h3 {
-	color:#6ECBFF;
+	color:#09bc8a;
 	margin:5px 0
 }
 #headBarWrap {
-	background:#3D4F51;
+	background:#004346;
 	width:100%;
 	margin: 0 auto;
 	max-width: 350px;
-}
-#headBarWrap div{
-	padding:10px 20px;
-	cursor: pointer;
-}
-#headBarWrap div:hover, #headBarWrap div:focus{
-	background:#536C6F;
 }
 #footWrap{
 	display:grid;
 	grid-template-columns: 1fr 1fr 1fr
 }
 footer{
-	background-color: #004bae;
-}
-#dashWrap .leftSidebar {
-	width:100%;
-	max-width:250px;
-	padding-right: 15px;
-}
-@media screen and (max-width:1100px){
-	.chatInput{
-		margin:0;
-	}
-	.backtodashbtn{
-		display:none;
-	}
-	#leftSide, #rightSide{		
-		max-width: 100%;
-	}
-	.chatbox{
-		max-height:570px
-	}
+	background-color: #004346;
 }
 @media screen and (max-width:800px) {	
-
 	.mobileHeader{
 		display:grid;		
 	}
@@ -367,5 +344,4 @@ footer{
 		max-width:500px;
 		margin-bottom:50px
 	}
-
 }

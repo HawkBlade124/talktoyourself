@@ -1,6 +1,6 @@
 // frontend/src/pages/Login.jsx
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function buildApiUrl() {
@@ -14,6 +14,7 @@ function Login() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [hasError, setHasError] = useState("");
   const [success, setSuccess] = useState(false);
   const [rememberMe, setRememberMe] = useState("");
   const navigate = useNavigate();
@@ -61,6 +62,18 @@ if (res.data?.success) {
     );
   }
 };
+const UserSubmitErrors = () => {
+  if (!identifier.trim() || !password.trim()) {
+    setError("Username and password fields cannot be empty.");
+    setHasError(true);
+    return false;
+  }
+
+  setError("");
+  setHasError(false);  
+  return true;
+};;
+
 
   return (
     <>
@@ -71,15 +84,15 @@ if (res.data?.success) {
             <form className="flex flex-col w-xs gap-5" onSubmit={handleLogin}>
               <div className="flex items-center bg-white rounded-md h-8">
                 <i className="fa-regular fa-user inputIcons"></i>
-                <input type="text" value={identifier} className="rounded-md h-8 pl-5 w-full" name="identifier" placeholder="Username or Email" onChange={(e) => setIdentifier(e.target.value)} required />
+                <input type="text" className="loginInput rounded-md h-8 pl-5 w-full" name="identifier" placeholder="Username or Email" value={identifier} onChange={(e) => { setIdentifier(e.target.value);   setHasError(false); setError("");}} required />
               </div>
               <div className="flex items-center bg-white rounded-md h-8">
                 <i className="fa-regular fa-lock inputIcons"></i>
-                <input type="password" value={password} className="rounded-md h-8 pl-5 w-full" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+                <input type="password" value={password} className="loginInput rounded-md h-8 pl-5 w-full" name="password" placeholder="Password" onChange={(e) => { setPassword(e.target.value); setHasError(false); setError(""); }} required />
                 <i className="fa-solid fa-eye"></i>
               </div>
               <div id="rememberMe">Remember Me? <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} name="remember" /></div>
-              <button type="submit" className="bg-green-500 hover:bg-green-400 hover:border-sky-500 p-2 rounded-md cursor-pointer" >
+              <button type="submit" className="bg-green-500 hover:bg-green-400 hover:border-sky-500 p-2 rounded-md cursor-pointer" onClick={() => { const ok = UserSubmitErrors(); if (ok) handleLogin();}} >
                 Login
               </button>              
               {error && <p className="text-red-500 text-sm mt-3">{error}</p>}

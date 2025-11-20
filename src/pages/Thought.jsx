@@ -11,7 +11,6 @@ function buildApiUrl() {
 }
 
 function Thought() {
-  // ---------- State ----------
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [h1Visible, setH1Visible] = useState(true);
@@ -27,14 +26,13 @@ function Thought() {
   const [tags, setTags] = useState([]);
   const [error, setError] = useState("");
   const [hoveredId, setHoveredId] = useState(null);
+  const [activeTab, setActiveTab] = useState("main");
 
-  // ---------- Hooks (top-level ONLY) ----------
   const { token, loading } = useAuth();
   const navigate = useNavigate();
   const { ThoughtName } = useParams();
   const apiBase = buildApiUrl();
 
-  // ---------- Auth redirect ----------
   useEffect(() => {
     if (!loading && !token) {
       navigate("/Unauthorized");
@@ -262,126 +260,158 @@ function Thought() {
       setError("An error occurred while deleting.");
     }
   };
-
-  // ---------- Render ----------
+  const switchTabs = () => {    
+    switch(active) {
+      case "search":
+        return
+    }
+  }
   return (
-    <div id="thoughtBody" className="flex m-auto h-screen">
-      {/* LEFT SIDEBAR */}
-      <div className="leftSidebar p-5">
-        <div id="searchThoughts">
-          <div id="searchSideBarHead" className="flex gap-2 items-center mt-5">
-            <i className="fa-solid fa-magnifying-glass"></i>
-            <input type="text" className="box-border" value={search} onChange={handleSearch} placeholder="Search Your Thoughts"/>
+    <>
+        <div id="headBar" className="p-5 lg:hidden md:flex items-center"> 
+            <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md lg:hidden items-center gap-2">
+              <i className="fa-solid fa-arrow-left"></i>              
+            </Link>         
+            <div id="headBarWrap" className="flex items-center justify-center rounded-md">
+              <div id="thoughtSearch" className={`p-2 ${activeTab === "search" ? "bg-blue-500 text-white rounded-md" : ""}`} onClick={() => setActiveTab("search")}>Search</div>
+              <div id="main" className={`p-2 ${activeTab === "main" ? "bg-blue-500 text-white rounded-md" : ""}`} onClick={() => setActiveTab("main")}>Main</div>
+              <div id="thoughtDetails" className={`p-2 ${activeTab === "details" ? "bg-blue-500 text-white rounded-md" : ""}`}  onClick={() => setActiveTab("details")}>Details</div>
+            </div>
+        </div>
+      <div id="thoughtBody" className="flex flex-col lg:flex-row m-auto">
+
+        {/* LEFT SIDEBAR */}
+        <div id="leftSide"   className={`sidebar p-5 ${activeTab === "search" ? "block" : "hidden"} lg:block`}>
+          <div id="searchThoughts">
+            <div id="searchSideBarHead" className="flex gap-2 items-center mt-5">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              <input type="text" className="box-border" value={search} onChange={handleSearch} placeholder="Search Your Thoughts"/>
+            </div>
+
+            {search.trim() ? (
+              <div className="searchResults mt-3">
+                {messages.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No matches found.</p>
+                ) : (
+                  <ul className="flex flex-col gap-2">
+                    {messages.map((msg) => (
+                      <li key={msg.MessageID} className="border p-2 rounded-md cursor-pointer hover:bg-gray-100" onClick={() => { const targetThought = msg.ThoughtName || ThoughtName || ""; navigate(`/thought/${encodeURIComponent(targetThought)}`);}}>
+                        <div className="font-semibold">
+                          {msg.ThoughtName || "Unknown Thought"}
+                        </div>
+                        <div className="text-sm text-gray-600 truncate">
+                          {msg.Message}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <div className="defaultSidebar mt-3 text-gray-600 text-sm">
+                <p>Search across all your thoughts.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* MAIN AREA */}
+        <div id="mainSection"   className={`flex flex-col w-full chatInput justify-between mr-10 ml-10 ${activeTab === "main" ? "flex" : "hidden"} lg:flex`}>
+          <div className="thoughtInfoHead flex items-center gap-10">
+            <Link to="/dashboard" className="backtodashbtn ml-5 rounded-md flex items-center gap-2 justify-center">
+              <i className="fa-solid fa-arrow-left"></i>            
+            </Link>
+            <div id="thoughtName" className="text-3xl font-bold text-center w-full"> Thoughts of {ThoughtName}</div>
           </div>
 
-          {search.trim() ? (
-            <div className="searchResults mt-3">
-              {messages.length === 0 ? (
-                <p className="text-gray-500 text-sm">No matches found.</p>
-              ) : (
-                <ul className="flex flex-col gap-2">
-                  {messages.map((msg) => (
-                    <li key={msg.MessageID} className="border p-2 rounded-md cursor-pointer hover:bg-gray-100" onClick={() => { const targetThought = msg.ThoughtName || ThoughtName || ""; navigate(`/thought/${encodeURIComponent(targetThought)}`);}}>
-                      <div className="font-semibold">
-                        {msg.ThoughtName || "Unknown Thought"}
-                      </div>
-                      <div className="text-sm text-gray-600 truncate">
-                        {msg.Message}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+          {!reminderHidden && (
+            <p id="reminder">
+              Remember, no one will reply to you in any of these chats. It’s
+              purely a space for your thoughts.
+              <i
+                onClick={() => setReminderHidden(true)}
+                className="fa-solid fa-times cursor-pointer ml-2"
+              ></i>
+            </p>
+          )}
+
+          {/* EMPTY STATE */}
+          {messages.length === 0 && h1Visible ? (
+            <div className="initialChatBody w-2xl m-auto flex flex-col gap-20 mb-5">
+              <div className="flex gap-5">
+                <h1>Welcome To {ThoughtName}</h1>
+                <i className="fa-solid fa-thought-bubble text-5xl"></i>
+              </div>
+              <div className="text-center">
+                <p>
+                  A place to compile all your thoughts and talk to yourself. To
+                  begin, just enter a thought in the text bar.
+                </p>
+              </div>
             </div>
           ) : (
-            <div className="defaultSidebar mt-3 text-gray-600 text-sm">
-              <p>Search across all your thoughts.</p>
+            <div className="chatbox w-full h-full ">
+              <div className="sentMessages w-full">
+                {messages.map((msg) => (
+                  <div key={msg.MessageID} className="sentMessage flex flex-col justify-start items-start w-full" >
+                    <div className="flex items-start justify-between w-full" onMouseEnter={() => setHoveredId(msg.MessageID)} onMouseLeave={() => setHoveredId(null)} >
+                      <span className="text-xs">
+                        {msg.DateSent ? new Date(msg.DateSent).toLocaleString() : ""}
+                      </span>
+                        <div className="editGroup rounded-md flex justify-end gap-2">
+                          <div className="cursor-pointer" onClick={() => editMessage(msg.MessageID)}>
+                            <i className="fa-regular fa-pencil"></i>
+                          </div>
+                          <div className="cursor-pointer" onClick={() => deleteMessage(msg.MessageID)}>
+                            <i className="fa-regular fa-trash-can"></i>
+                          </div>
+                        </div>
+                    </div>
+                    <div className="messageString">{msg.Message}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+
+          <div className="sendWrapper w-full p-5 flex gap-5">
+            <div id="fileInput">
+              <input type="file" id="attachFile" style={{ display: "none" }} />
+              <button className="fileUploadButton">
+                <i className="fa-regular fa-paperclip"></i>
+              </button>
+            </div>
+
+            <input id="messageInput" name="chatInput" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && enteredMessage()} placeholder="A Penny For Your Thoughts?" />
+
+            <button onClick={enteredMessage} id="sendChat" className="send" disabled={!message.trim()}>
+              <i className="fa-solid fa-paper-plane"></i>
+            </button>          
+          </div>
+
+          {error && (
+            <p className="text-red-500 text-sm mt-2">
+              {error}
+            </p>
+          )}
+        </div>
+        <div id="rightSide"   className={`sidebar p-5 flex-col ${activeTab === "details" ? "flex" : "hidden"} lg:flex`}>
+            <h2 className="text-xl w-full">Detailed Information</h2>
+            <section className="sidebarSection">
+              <h3 className="text-lg">Lists</h3>
+              <div className=""></div>
+            </section>
+            <section className="sidebarSection">
+              <h3 className="text-lg">Categories</h3>
+              <div className=""></div>
+            </section>          
+            <section className="sidebarSection">
+              <h3 className="text-lg">Tags</h3>
+              <div className=""></div>
+            </section>
         </div>
       </div>
-
-      {/* MAIN AREA */}
-      <div className="flex flex-col w-full chatInput justify-between">
-        <div className="thoughtInfoHead flex justify-between">
-          <Link to="/dashboard" className="p-2 bg-gray-500 br-5 rounded-md flex items-center gap-2">
-            <i className="fa-solid fa-arrow-left"></i>
-            Back to Dashboard
-          </Link>
-        </div>
-
-        {!reminderHidden && (
-          <p id="reminder">
-            Remember, no one will reply to you in any of these chats. It’s
-            purely a space for your thoughts.
-            <i
-              onClick={() => setReminderHidden(true)}
-              className="fa-solid fa-times cursor-pointer ml-2"
-            ></i>
-          </p>
-        )}
-
-        {/* EMPTY STATE */}
-        {messages.length === 0 && h1Visible ? (
-          <div className="initialChatBody w-2xl m-auto flex flex-col gap-20">
-            <div className="flex gap-5">
-              <h1>Welcome To {ThoughtName}</h1>
-              <i className="fa-solid fa-thought-bubble text-5xl"></i>
-            </div>
-            <div className="text-center">
-              <p>
-                A place to compile all your thoughts and talk to yourself. To
-                begin, just enter a thought in the text bar.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="chatbox w-full">
-            <div className="sentMessages w-full">
-              {messages.map((msg) => (
-                <div key={msg.MessageID} className="sentMessage flex flex-col justify-start items-start w-full" >
-                  <div className="flex items-start justify-between w-full" onMouseEnter={() => setHoveredId(msg.MessageID)} onMouseLeave={() => setHoveredId(null)} >
-                    <span className="text-xs">
-                      {msg.DateSent ? new Date(msg.DateSent).toLocaleString() : ""}
-                    </span>
-                      <div className="editGroup rounded-md flex justify-end gap-2">
-                        <div className="cursor-pointer" onClick={() => editMessage(msg.MessageID)}>
-                          <i className="fa-regular fa-pencil"></i>
-                        </div>
-                        <div className="cursor-pointer" onClick={() => deleteMessage(msg.MessageID)}>
-                          <i className="fa-regular fa-trash-can"></i>
-                        </div>
-                      </div>
-                  </div>
-                  <div className="messageString">{msg.Message}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="sendWrapper w-full p-5 flex gap-5">
-          <div id="fileInput">
-            <input type="file" id="attachFile" style={{ display: "none" }} />
-            <button className="fileUploadButton">
-              <i className="fa-regular fa-paperclip"></i>
-            </button>
-          </div>
-
-          <input id="messageInput" name="chatInput" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && enteredMessage()} placeholder="A Penny For Your Thoughts?" />
-
-          <button onClick={enteredMessage} id="sendChat" className="send" disabled={!message.trim()}>
-            <i className="fa-solid fa-paper-plane"></i>
-          </button>
-        </div>
-
-        {error && (
-          <p className="text-red-500 text-sm mt-2">
-            {error}
-          </p>
-        )}
-      </div>
-    </div>
+    </>
   );
 }
 
