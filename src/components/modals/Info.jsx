@@ -38,7 +38,7 @@ function InfoModal({ isOpen, onClose, thought, token }) {
     <ReactModal isOpen={isOpen} onRequestClose={onClose}>
       <div className="modalHead flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold uppercase">
-          Extended Thought Info for "{thought.ThoughtName}"
+          Extended Info for "{thought.ThoughtName}"
         </h2>
         <i className="fa-solid fa-xmark cursor-pointer" onClick={onClose}></i>
       </div>

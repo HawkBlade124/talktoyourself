@@ -11,11 +11,12 @@ import Dashboard from "./pages/Dashboard";
 import Thought from "./pages/Thought";
 import PageNotFound from "./pages/PageNotFound";
 import Unauthorized from "./pages/Unauthorized";
+import Lists from "./pages/Lists"
 import { useLocation } from "react-router-dom";
 
 function App() {
   const location = useLocation();
-  const noLayoutRoutes = ["/dashboard", "/thought"];
+  const noLayoutRoutes = ["/dashboard", "/thought", "/lists"];
 
   const hideLayout = noLayoutRoutes.some((path) =>
     location.pathname.startsWith(path)
@@ -30,6 +31,9 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/lists" element={<Lists />} />
+        <Route path="/lists/:ListName" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/thought/:ThoughtName" element={<Thought />} />
         <Route path="/404" element={<PageNotFound />} />

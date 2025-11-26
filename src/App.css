@@ -131,17 +131,24 @@ height:90vh
 	justify-content: space-between;
 	width:100%;
 	height:100%;
-	max-height: 800px
+}
+.rightScreen{
+	background:#020610;
+	height:100%;
 }
 .thoughtItem {
 	display:flex;
-	background:#27292d;
+	background:#0b102b;
 	color:#438eef;
 	border-radius:15px;
 	padding: 20px 10px;
 	width:100%;
 	max-width:350px;
 	border:2px solid #438eef;
+}
+.thoughtName{
+	font-weight: bold;
+	color:#28f296
 }
 .thoughtFunctions i {
 	display:flex;
@@ -250,7 +257,6 @@ height:86vh;
 	background-color: #1d1f20;
 }
 .dashBody{
-	background:#151718;
 	padding:15px 20px;
 	margin:10px 0;
 	border-radius: 20px;
@@ -290,11 +296,24 @@ footer{
 	background-color: #004bae;
 }
 #dashWrap .leftSidebar {
+	background:#36539d;
 	width:100%;
-	max-width:250px;
-	padding-right: 15px;
+	max-width:175px;
+}
+#thoughtBody {
+	background-color: #020610
 }
 @media screen and (max-width:1100px){
+	#mobileMenu{
+		background-color: #3f4147;		
+		position:absolute;
+		left:0;
+		z-index: 5;
+		height:100%;
+	}
+	#dashOverlay{
+		position:absolute;
+	}
 	.chatInput{
 		margin:0;
 	}
@@ -306,6 +325,16 @@ footer{
 	}
 	.chatbox{
 		max-height:570px
+	}
+	#dashOverlay{
+		background-color:rgb(0,0,0,0.8);
+	}
+	#dashWrap{
+		padding:0 2%
+	}
+	.rightScreen{
+		padding:0;
+		margin-top: 5px;
 	}
 }
 @media screen and (max-width:800px) {	
@@ -367,5 +396,4 @@ footer{
 		max-width:500px;
 		margin-bottom:50px
 	}
-
 }

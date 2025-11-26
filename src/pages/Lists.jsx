@@ -226,7 +226,7 @@ if (!user) return null;
           <i className="fa-regular fa-xmark text-2xl" onClick={closeMobileMenu}/>
         </div>
           
-            <div className="sidebarLink"><i className="fa-regular fa-home"></i> Home</div>
+            <Link to="/dashboard" className="sidebarLink"><i className="fa-regular fa-home"></i> Home</Link>
             <div className="sidebarLink"><i className="fa-regular fa-game-board"></i> Mood Boards</div>
             <div className="sidebarLink"><i className="fa-regular fa-microphone-stand"></i> Prompts</div>
             <div className="sidebarLink"><i className="fa-regular fa-list"></i> Categories</div>
@@ -239,7 +239,7 @@ if (!user) return null;
         </div>
       </div>
       <div id="dashOverlay" className={`lg:hidden w-full h-full ${ mobileMenu ? "block" : "hidden" }`} onClick={closeMobileMenu} ></div>
-      <div className="rightScreen w-full p-6 ml">
+      <div className="rightScreen w-full p-2 ml">
       <div id="homeHead" className="flex justify-between items-center">
         <div className="flex items-center gap-5">
           <h1>Hey there, {user.Username}!</h1> <span id="tierName" style={{ color: userTier(user.Tier), backgroundColor: `${userTier(user.Tier)}80` }}>{user.Tier}</span>
@@ -249,68 +249,12 @@ if (!user) return null;
         </div>
       </div>
       <div id="dashLayout" className="flex justify-between w-full  mt-5">
-      <div id="layoutLeft" className="w-full">
-        
       <section className="dashBody w-full">
-        <div className="flex justify-between items-center"> 
-        <h2 className="text-2xl">Your Brain Dump</h2>   
-        <div className="brainDumpFunctions">
-          <div className="sortBy">
-
-          </div>
-          <div className="addThoughtButton flex flex-col">
-            <i className="fa-kit text-5xl fa-regular-thought-bubble-circle-plus cursor-pointer" onClick={() => addThoughtModal()}></i>                    
-          </div>      
-        </div>
-        </div>
-        <div className="flex w-full">        
-        <div id="thoughtList" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-3xl mb-5 mt-5 place-items-center">
-          {Thoughts.map((f, i) => (
-            <div key={i} className="thoughtItem w-full flex flex-col items-center justify-between">
-              <div className="flex justify-between w-full">              
-                <i className="text-xl fa-regular fa-thumbtack-angle"></i>
-                <div className="flex">              
-                  <i onClick={() => favoriteThought(f.ThoughtID, !f.Favorite)} className={`text-xl cursor-pointer ${f.Favorite ? "fa-solid fa-heart text-red-500" : "fa-regular fa-heart"}`}/>
-                  <i onClick={() => infoThoughtModal(f)} className="text-xl cursor-pointer fa-regular fa-circle-info"/>              
-                </div>
-              </div>
-              <div className="thoughtName">{f.ThoughtName}</div>
-              <div className="text-lg">{f.ThoughtDescr}</div>
-              <div className="thoughtFoot flex items-center justify-between w-full mt-5">
-                <Link to={`/thought/${encodeURIComponent(f.ThoughtName)}`} className="contThoughtButton text-base text-nowrap"><span className="text-green-500 hover:text-green-200 ">Enter</span></Link>
-                <div className="thoughtFunctions flex items-center justify-end w-full gap-1">
-                  <i onClick={() => editSingleThought(f)} className="text-xl fa-solid fa-cog cursor-pointer hover:text-blue-200"></i>
-                  <i onClick={() => deleteThoughtModal(f)} className="text-xl fa-solid fa-trash cursor-pointer text-red-500 hover:text-red-200"></i>
-                  
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>      
-        </div>
-                <section className="dashBody">
-          <h2 className="text-2xl">Recent</h2>
-          No recent thoughts
-        </section>
-        <section className="dashBody">
-          <h2 className="text-2xl">Quick Access</h2>
-          No pinned thoughts
-        </section>
-        <section className="dashBody">
-          <h2 className="text-2xl">Lists</h2>
-          No lists created.
-        </section>
-        <section className="dashBody">
-          <h2 className="text-2xl">Mood Boards</h2>
-          No Mood Boards.
-        </section>
-
+        
       </section>
-      </div>
+
       </div>
       {error && <p className="text-red-500">{error}</p>}
-      {/* <h2 className="mt-5 text-2xl">Tags</h2> */}
-      {/* <h2 className="mt-5 text-2xl">Categories</h2> */} 
       </div>
       </div>
     </div>    

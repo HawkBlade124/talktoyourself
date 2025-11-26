@@ -37,11 +37,14 @@ function Register() {
 
       const data = await res.json();
       console.log("Response:", data);
-
+      
       if (!res.ok) {
-        setError(data.error || "Registration failed");
+        const errorMessage = data.error || data.details || data.message || "Request failed";
+        console.error("API Error:", errorMessage, "Status:", res.status);
+        setError(errorMessage);
         return;
       }
+
 
       const loginRes = await fetch("http://localhost:5000/api/login", {
         method: "POST",

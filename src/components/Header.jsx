@@ -9,10 +9,6 @@ function Header() {
   const [searchResults, setSearchResults] = useState([])
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  const openMobileMenu = () => {
-    setMobileMenu(true);
-  }
-
   const closeMobileMenu = () =>{
     setMobileMenu(false);
   }

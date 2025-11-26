@@ -278,7 +278,7 @@ function Thought() {
               <div id="thoughtDetails" className={`p-2 ${activeTab === "details" ? "bg-blue-500 text-white rounded-md" : ""}`}  onClick={() => setActiveTab("details")}>Details</div>
             </div>
         </div>
-      <div id="thoughtBody" className="flex flex-col lg:flex-row m-auto">
+      <div id="thoughtBody" className="flex flex-col lg:flex-row m-auto h-full">
 
         {/* LEFT SIDEBAR */}
         <div id="leftSide"   className={`sidebar p-5 ${activeTab === "search" ? "block" : "hidden"} lg:block`}>
